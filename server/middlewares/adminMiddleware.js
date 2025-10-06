@@ -1,4 +1,4 @@
-export function adminMiddleware(req, res, next) {
+const adminMiddleware = (req, res, next) => {
   if (!req.user) {
     return res.status(401).json({ message: "Unauthorized" });
   }
@@ -9,3 +9,5 @@ export function adminMiddleware(req, res, next) {
 
   next();
 }
+
+export default adminMiddleware;

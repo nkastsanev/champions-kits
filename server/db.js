@@ -8,7 +8,6 @@ const config = {
 export async function connectDB() {
   try {
     const pool = await sql.connect(config);
-    console.log("DB Connected");
     return pool;
   } catch (err) {
     console.error("DB Connection Failed:");
