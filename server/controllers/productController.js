@@ -129,3 +129,5 @@ productController.delete("/:id", authMiddleware, adminMiddleware, async (req, re
     }
 
 });
+
+export default productController;
