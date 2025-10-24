@@ -16,6 +16,19 @@ leagueController.get('/', async (req, res) => {
 
 });
 
+leagueController.post('/', authMiddleware, adminMiddleware, async (req, res) => {
+
+    const {categoryId, leagueName} = req.body;
+
+    try {
+        const league = await leagueService.create(categoryId, leagueName);
+        res.status(201).json(league);
+    } catch (err) {
+        res.status(400).json({message: err.message});
+    }
+
+});
+
 leagueController.get('/category/:categoryId', async (req, res) => {
 
     const categoryId = req.params.categoryId
@@ -29,18 +42,6 @@ leagueController.get('/category/:categoryId', async (req, res) => {
 
 });
 
-leagueController.post('/', authMiddleware, adminMiddleware, async (req, res) => {
-
-    const {categoryId, leagueName} = req.body;
-
-    try {
-        const league = await leagueService.create(categoryId, leagueName);
-        res.status(201).json(league);
-    } catch (err) {
-        res.status(400).json({message: err.message});
-    }
-
-});
 
 leagueController.delete('/:leagueId', authMiddleware, adminMiddleware, async (req, res) => {
 
