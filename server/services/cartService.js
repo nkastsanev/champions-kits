@@ -1,6 +1,5 @@
 import sql from "mssql/msnodesqlv8.js";
 import { connectDB } from "../db.js";
-import { use } from "react";
 
 const cartService = {
 
@@ -100,28 +99,40 @@ const cartService = {
                             AND ps.Stock = 0
                         `);
 
-        const cart = await pool.request()
+        const cartResult = await pool.request()
             .input("UserId", sql.Int, userId)
-            .query(`SELECT 
-                  ci.Id AS CartItemId,
-                  ci.ProductId,
-                  p.Name AS ProductName,
-                  p.Price,,
-                  s.Name AS SizeName,
-                  ci.Quantity,
-                  ps.Stock AS AvailableStock,
-                  (p.Price * ci.Quantity) AS TotalPrice,
-                  i.ImageUrl AS MainImage
-                FROM dbo.CartItems ci
-                JOIN dbo.Products p ON ci.ProductId = p.Id
-                JOIN dbo.Sizes s ON ci.SizeId = s.Id
-                JOIN dbo.ProductSizes ps ON ci.ProductId = ps.ProductId AND ci.SizeId = ps.SizeId
-                LEFT JOIN dbo.ProductImages i ON i.ProductId = p.Id AND i.IsMain = 1
-                WHERE ci.UserId = @UserId
-                ORDER BY ci.Id DESC;
-    `);
+            .query(`
+            SELECT 
+                ci.Id AS CartItemId,
+                ci.ProductId,
+                p.Name AS ProductName,
+                p.Price,
+                s.Name AS SizeName,
+                ci.Quantity,
+                ps.Stock AS AvailableStock,
+                (p.Price * ci.Quantity) AS ProductTotalPrice,
+                i.ImageUrl AS MainImage
+            FROM dbo.CartItems ci
+            JOIN dbo.Products p ON ci.ProductId = p.Id
+            JOIN dbo.Sizes s ON ci.SizeId = s.Id
+            JOIN dbo.ProductSizes ps 
+                ON ci.ProductId = ps.ProductId AND ci.SizeId = ps.SizeId
+            LEFT JOIN dbo.ProductImages i 
+                ON i.ProductId = p.Id AND i.IsMain = 1
+            WHERE ci.UserId = @UserId
+            ORDER BY ci.Id DESC;
 
-        return cart.recordset;
+            SELECT 
+                SUM(ci.Quantity * p.Price) AS CartTotal
+            FROM dbo.CartItems ci
+            JOIN dbo.Products p ON ci.ProductId = p.Id
+            WHERE ci.UserId = @UserId;
+        `);
+
+        const items = cartResult.recordsets[0];
+        const total = cartResult.recordsets[1][0]?.CartTotal ?? 0;
+
+        return { items, total };
     },
 
     async updateCartItem(userId, productId, sizeId, quantity) {
@@ -196,25 +207,6 @@ const cartService = {
         }
 
         return clearing.recordset;
-    },
-
-    async getCartTotalPrice(userId) {
-        const pool = await connectDB();
-
-        const totalPriceResult = await pool.request()
-            .input("UserId", sql.Int, userId)
-            .query(`
-            SELECT 
-                SUM(ci.Quantity * p.Price) AS TotalPrice
-            FROM dbo.CartItems AS ci
-            JOIN dbo.Products AS p
-                ON ci.ProductId = p.Id
-            WHERE ci.UserId = @UserId
-        `);
-
-        const total = totalPriceResult.recordset[0].TotalPrice || 0;
-
-        return total;
     }
 }
 
