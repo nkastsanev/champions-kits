@@ -1,6 +1,20 @@
 import sql from "mssql/msnodesqlv8.js";
 import { connectDB } from "../db.js";
 
+const allowedOrderTransitions = {
+    new: ["processing", "cancelled"],
+
+    processing: ["shipped", "cancelled"],
+
+    shipped: ["delivered"],
+
+    delivered: ["returned"],
+
+    returned: [],
+
+    cancelled: []
+};
+
 const orderService = {
 
     async createOrder(userId, cart, orderData) {
@@ -213,8 +227,220 @@ const orderService = {
 
     async getOrderById(orderId) {
 
+        const pool = await connectDB();
+
+        const orderResult = await pool.request()
+            .input("OrderId", sql.Int, orderId)
+            .query(`SELECT * FROM dbo.Orders
+                WHERE Id = @OrderId`)
+
+        if (orderResult.recordset.length === 0) {
+            throw new Error('Order not found!')
+        }
+
+        const order = orderResult.recordset[0];
+
+        const orderItemsResult = await pool.request()
+            .input("OrderId", sql.Int, orderId)
+            .query(`SELECT * FROM dbo.OrderItems
+                WHERE OrderId = @OrderId`);
+
+        let orderItems = orderItemsResult.recordset;
+
+        return { order, orderItems }
+
+    },
+
+    async gerOrdersByUser(userId) {
+
+        const pool = await connectDB();
+
+        const ordersResult = await pool.request()
+            .input("UserId", sql.Int, userId)
+            .query(`SELECT * FROM dbo.Orders
+                WHERE UserId = @UserId`);
+
+        const orders = ordersResult.recordset;
+
+        if (orders.length === 0) {
+            return [];
+        }
+
+        for (const order of orders) {
+            const orderItemsResult = await pool.request()
+                .input("OrderId", sql.Int, order.Id)
+                .query(`
+                    SELECT 
+                        oi.*,
+                        p.Name AS ProductName,
+                        p.Price AS ProductPrice,
+                        pi.ImageUrl
+                    FROM dbo.OrderItems oi
+                    JOIN dbo.Products p ON p.Id = oi.ProductId
+                    LEFT JOIN dbo.ProductImages pi 
+                           ON pi.ProductId = oi.ProductId 
+                          AND pi.isMain = 1
+                    WHERE oi.OrderId = @OrderId
+        `);
+
+            order.items = orderItemsResult.recordset;
+        }
+
+        return orders;
+
+    },
+
+    async getAllOrders(pageNumber, pageSize) {
+
+        const pool = await connectDB();
+
+        const result = await pool.request()
+            .input("PageNumber", sql.Int, pageNumber)
+            .input("PageSize", sql.Int, pageSize)
+            .query(`SELECT 
+                    Id,
+                    Email,
+                    City,
+                    PaymentMethod,
+                    PaymentStatus,
+                    TotalPrice,
+                    OrderStatus,
+                    CreatedAt
+                    FROM dbo.Orders
+                    ORDER BY CreatedAt DESC
+                    OFFSET (@PageNumber - 1) * @PageSize ROWS
+                    FETCH NEXT @PageSize ROWS ONLY`)
+
+        return result;
+    },
+
+    async updateOrderStatus(orderId, newStatus) {
+
+        const pool = await connectDB();
+
+        const orderResult = await pool.request()
+            .input("OrderId", sql.Int, orderId)
+            .query(`SELECT * FROM dbo.Orders
+                    WHERE Id = @OrderId`)
+
+        if (orderResult.recordset.length === 0) {
+            throw new Error('Order not found!')
+        }
+
+        const order = orderResult.recordset[0];
+        const prevStatus = order.OrderStatus;
+
+        const allowed = allowedOrderTransitions[prevStatus] || [];
+
+        if (newStatus === "shipped" && order.PaymentMethod === "card" && order.PaymentStatus !== "paid") {
+            throw new Error("The order cannot be shipped, because it's unpaid")
+        }
+
+        if (!allowed.includes(newStatus)) {
+            throw new Error(`Status: '${newStatus}' is not allowed from '${prevStatus}'`)
+        }
+
+        if (newStatus === "cancelled" || newStatus === "returned") {
+            await this.restoreStockForOrder(orderId)
+
+            if (order.UserId) {
+                await this.refundPointsIfNeeded(order)
+            }
+
+        }
+
+        if (newStatus === "delivered" && order.PaymentStatus === "paid" && order.UserId) {
+            await this.addBonusPoints(order);
+        }
+
+        await pool.request()
+            .input("OrderId", sql.Int, orderId)
+            .input("OrderStatus", sql.NVarChar, newStatus)
+            .query(`UPDATE dbo.Orders
+                    SET OrderStatus = @OrderStatus
+                    WHERE Id = @OrderId`)
+    },
+
+    async restoreStockForOrder(orderId) {
+        const pool = await connectDB();
+
+        const itemsResult = await pool.request()
+            .input("OrderId", sql.Int, orderId)
+            .query(`SELECT * FROM dbo.OrderItems
+                    WHERE OrderId = @OrderId`)
+
+        const items = itemsResult.recordset;
+
+        for (const item of items) {
+            await pool.request()
+                .input("ProductId", sql.Int, item.ProductId)
+                .input("SizeId", sql.Int, item.SizeId)
+                .input("Qty", sql.Int, item.Quantity)
+                .query(`UPDATE dbo.ProductSizes
+                            SET Stock = Stock + @Qty
+                            WHERE ProductId = @ProductId AND SizeId = @SizeId`)
+        }
+    },
+
+    async refundPointsIfNeeded(order) {
+        if (!order.UserId) return;
+
+        const earnedPoints = Math.floor(order.TotalPrice / 10);
+
+        const pool = await connectDB();
+
+        await pool.request()
+            .input("UserId", sql.Int, order.UserId)
+            .input("Points", sql.Int, earnedPoints)
+            .query(`UPDATE dbo.Users
+                    SET BonusPoints = BonusPoints - @Points
+                    WHERE Id = @UserId`);
+    },
+
+    async addBonusPoints(order) {
+
+        const points = Math.floor(order.TotalPrice / 10);
+
+        const pool = await connectDB();
+
+        await pool.request()
+            .input("UserId", sql.Int, order.UserId)
+            .input("Points", sql.Int, points)
+            .query(`UPDATE dbo.Users
+                    SET BonusPoints = BonusPoints + @Points
+                    WHERE Id = @UserId`)
+    },
+
+    async markOrderAsPaid(orderId) {
+
+        const pool = await connectDB();
+
+        const orderResult = await pool.request()
+            .input("OrderId", sql.Int, orderId)
+            .query(`SELECT * FROM dbo.Orders
+                    WHERE Id = @OrderId`);
+
+        const order = orderResult.recordset[0];
+
+        if (!order) {
+            throw new Error("Order not found!")
+        }
+
+        if (order.PaymentStatus === `paid`){
+            throw new Error("The order is already paid!")
+        }
+
+
+
+        if (order.PaymentMethod === `card` && order.PaymentStatus === `pending`) {
+            await pool.request()
+                .input("OrderId", sql.Int, orderId)
+                .query(`UPDATE dbo.Orders
+                        SET PaymentStatus = "paid", PaymentReference = "MOCK_PAYMENT"
+                        WHERE Id = @OrderId`);
+        }
     }
-    
+
 };
 
 
