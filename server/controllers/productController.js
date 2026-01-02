@@ -2,8 +2,6 @@ import { Router } from "express";
 import productService from "../services/productService.js";
 import authMiddleware from "../middlewares/authMiddleware.js";
 import adminMiddleware from "../middlewares/adminMiddleware.js";
-import sql from "mssql/msnodesqlv8.js";
-import { connectDB } from "../db.js";
 
 const productController = Router();
 
@@ -14,13 +12,7 @@ productController.get("/page/:pageNum", async (req, res) => {
         const page = parseInt(req.params.pageNum) || 1;
         const pageSize = 20;
 
-        const pool = await connectDB();
-
-        const countResult = await pool.request()
-            .query(`SELECT COUNT(*) AS total FROM dbo.Products`);
-
-        const total = countResult.recordset[0].total;
-
+        const total = await productService.countProducts();
         const products = await productService.getAllProducts(page, pageSize);
 
         res.status(200).json({
@@ -44,15 +36,8 @@ productController.get("/category/:categoryId/page/:pageNum", async (req, res) =>
         const page = parseInt(req.params.pageNum) || 1;
         const pageSize = 20;
 
-        const pool = await connectDB();
 
-        const countResult = await pool.request()
-            .input("CategoryId", sql.Int, categoryId)
-            .query(`SELECT COUNT (*) AS total FROM dbo.Products
-                    WHERE CategoryId = @CategoryId`)
-
-        const total = countResult.recordset[0].total;
-
+        const total = await productService.countProductsFromOneCategory(categoryId);
         const products = await productService.getProductsByCategory(categoryId, page, pageSize);
         res.status(200).json({
             products,
@@ -75,15 +60,7 @@ productController.get("/league/:leagueId/page/:pageNum", async (req, res) => {
         const page = parseInt(req.params.pageNum) || 1;
         const pageSize = 20;
 
-        const pool = await connectDB();
-
-        const countResult = await pool.request()
-            .input("LeagueId", sql.Int, leagueId)
-            .query(`SELECT COUNT(*) AS total FROM dbo.Products
-                    WHERE LeagueId = @LeagueId`)
-
-        const total = countResult.recordset[0].total;
-
+        const total = await productService.countProductsFromOneLeague(leagueId);
         const products = await productService.getProductsByLeague(leagueId, page, pageSize)
         res.status(200).json({
             products,
@@ -106,15 +83,8 @@ productController.get("/team/:teamId/page/:pageNum", async (req, res) => {
         const page = parseInt(req.params.pageNum) || 1;
         const pageSize = 20;
 
-        const pool = await connectDB();
-
-        const countResult = await pool.request()
-            .input("TeamId", sql.Int, teamId)
-            .query(`SELECT COUNT(*) AS total FROM dbo.Products
-                    WHERE TeamId = @TeamId`)
         
-        const total = countResult.recordset[0].total;
-
+        const total = await productService.countProductsFromOneTeam(teamId);
         const products = await productService.getProductsByTeam(teamId, page, pageSize);
 
         res.status(200).json({
@@ -133,7 +103,7 @@ productController.get("/team/:teamId/page/:pageNum", async (req, res) => {
 // Getting product by id
 productController.get("/:productId", async (req, res) => {
 
-    const productId = req.params;
+    const { productId } = req.params;
 
     try {
         const product = await productService.getProductById(productId);
@@ -169,7 +139,7 @@ productController.post("/", authMiddleware, adminMiddleware, async (req, res) =>
 // Updating product
 productController.put("/:id", authMiddleware, adminMiddleware, async (req, res) => {
 
-    const productId = req.params.id;
+    const { productId } = req.params.id;
     const {categoryId, leagueId, teamId, productName, description, price, images, sizes} = req.body;
 
     try {
@@ -195,7 +165,7 @@ productController.put("/:id", authMiddleware, adminMiddleware, async (req, res) 
 
 productController.delete("/:id", authMiddleware, adminMiddleware, async (req, res) => {
 
-    const productId = req.params.id;
+    const { productId } = req.params.id;
 
     try {
         await productService.deleteProduct(productId);

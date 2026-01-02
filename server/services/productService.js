@@ -406,42 +406,74 @@ const productService = {
     async deleteProduct(productId) {
         const pool = await connectDB();
         const transaction = new sql.Transaction(pool);
-        
+
         try {
             await transaction.begin();
-        
+
             const request = new sql.Request(transaction);
-        
+
             const checkProductRes = await request
                 .input("Id", sql.Int, productId)
                 .query(`SELECT * FROM dbo.Products WHERE Id = @Id`);
-        
+
             if (checkProductRes.recordset.length < 1) {
                 throw new Error("Product not found!");
             }
-        
+
             await request
                 .input("ProductId", sql.Int, productId)
                 .query(`DELETE FROM dbo.ProductImages WHERE ProductId = @ProductId`);
-        
+
             await request
                 .input("ProductId", sql.Int, productId)
                 .query(`DELETE FROM dbo.ProductSizes WHERE ProductId = @ProductId`);
-        
+
             await request
                 .input("Id", sql.Int, productId)
                 .query(`DELETE FROM dbo.Products WHERE Id = @Id`);
-        
+
             await transaction.commit();
             return { message: "Product deleted successfully." };
-        
+
         } catch (err) {
             await transaction.rollback();
             throw err;
+        }
+    },
+
+    async countProducts() {
+        const pool = await connectDB();
+        const result = await pool.request()
+            .query(`SELECT COUNT(*) AS total FROM dbo.Products`)
+        return result.recordset[0].total;
+    },
+
+    async countProductsFromOneCategory(categoryId) {
+        const pool = await connectDB();
+        const result = await pool.request()
+            .input("CategoryId", sql.Int, categoryId)
+            .query(`SELECT COUNT (*) AS total FROM dbo.Products
+                    WHERE CategoryId = @CategoryId`)
+        return result.recordset[0].total;
+    },
+
+    async countProductsFromOneLeague(leagueId) {
+        const pool = await connectDB();
+        const result = await pool.request()
+            .input("LeagueId", sql.Int, leagueId)
+            .query(`SELECT COUNT (*) AS total FROM dbo.Products
+                    WHERE LeagueId = @LeagueId`)
+        return result.recordset[0].total;
+    },
+
+    async countProductsFromOneTeam(teamId) {
+        const pool = await connectDB();
+        const result = await pool.request()
+            .input("TeamId", sql.Int, teamId)
+            .query(`SELECT COUNT (*) AS total FROM dbo.Products
+                    WHERE TeamId = @TeamId`)
+        return result.recordset[0].total;
     }
-}
-
-
 
 };
 

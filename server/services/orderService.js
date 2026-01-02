@@ -311,10 +311,14 @@ const orderService = {
                     OFFSET (@PageNumber - 1) * @PageSize ROWS
                     FETCH NEXT @PageSize ROWS ONLY`)
 
-        return result;
+        return result.recordset;
     },
 
     async updateOrderStatus(orderId, newStatus) {
+
+        if (!newStatus || typeof newStatus !== "string") {
+            throw new Error("Invalid order status");
+        }
 
         const pool = await connectDB();
 
@@ -353,12 +357,17 @@ const orderService = {
             await this.addBonusPoints(order);
         }
 
-        await pool.request()
+        const updatedOrderResult = await pool.request()
             .input("OrderId", sql.Int, orderId)
             .input("OrderStatus", sql.NVarChar, newStatus)
             .query(`UPDATE dbo.Orders
                     SET OrderStatus = @OrderStatus
+                    OUTPUT INSERTED.*
                     WHERE Id = @OrderId`)
+
+        const updatedOrder = updatedOrderResult.recordset[0]
+
+        return updatedOrder;
     },
 
     async restoreStockForOrder(orderId) {
@@ -426,7 +435,7 @@ const orderService = {
             throw new Error("Order not found!")
         }
 
-        if (order.PaymentStatus === `paid`){
+        if (order.PaymentStatus === `paid`) {
             throw new Error("The order is already paid!")
         }
 
@@ -436,9 +445,16 @@ const orderService = {
             await pool.request()
                 .input("OrderId", sql.Int, orderId)
                 .query(`UPDATE dbo.Orders
-                        SET PaymentStatus = "paid", PaymentReference = "MOCK_PAYMENT"
+                        SET PaymentStatus = 'paid', PaymentReference = 'MOCK_PAYMENT'
                         WHERE Id = @OrderId`);
         }
+    },
+
+    async countOrders() {
+        const pool = await connectDB();
+        const result = await pool.request()
+            .query(`SELECT COUNT(*) AS total FROM dbo.Orders`);
+        return result.recordset[0].total;
     }
 
 };
