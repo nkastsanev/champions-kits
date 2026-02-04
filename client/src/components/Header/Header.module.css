@@ -1,10 +1,30 @@
 .header {
     position: fixed;
-    background: black;
     top: 0;
     left: 0;
     width: 100%;
     z-index: 1000;
+}
+
+.topBar {
+  height: 36px;
+  background-color: #d1a71d;
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  align-items: center;
+  font-size: 12.5px;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+  color: #000000;
+}
+
+.topBarText {
+  white-space: nowrap;
+  opacity: 0.9;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 ul {
@@ -14,7 +34,8 @@ ul {
 .headerContainer {
     display: flex;
     align-items: center;
-    height: 75px;
+    background: black;
+    height: 80px;
 }
 
 .leftSide,
@@ -25,14 +46,26 @@ ul {
 
 .leftSide {
     display: flex;
-    justify-content: flex-start;
-    margin-left: 30px;
+    justify-content: flex-end;
+    margin-left: 25px;
     flex: 2;
 }
 
 .leftSide img {
     height: 55px;
     width: auto;
+}
+
+.leftSide .logoWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.iconAdmin {
+  font-size: 40px;
+  margin-right: 25px;
+  cursor: pointer;
 }
 
 .centerSide {
@@ -55,7 +88,7 @@ ul {
     display: flex;
     align-items: center;
     padding: 0 10px;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.3s ease;
 }
 
 .centerSide ul li ul.dropdown {
@@ -63,22 +96,18 @@ ul {
     top: 100%;
     left: 0;
     display: none;
-    box-shadow: 0px 8px 16px 1px rgba(0, 0, 0, 0.6);
-}
-
-.centerSide ul li ul.dropdown {
     min-width: 100%;
-    position: absolute;
     z-index: 999;
     background: black;
-    display: none;
+    box-shadow: 0px 8px 16px 1px rgba(0, 0, 0, 0.6);
 }
 
 .centerSide ul li ul.dropdown li {
     display: flex;
+    position: relative;
     text-align: center;
     justify-content: center;
-    height: 50px;
+    height: 60px;
 }
 
 .centerSide ul li ul.dropdown li a {
@@ -89,23 +118,49 @@ ul {
     justify-content: center;
 }
 
-.centerSide ul li a:hover {
-    background: #1F1F1F;
+.centerSide ul li ul.dropdown li ul.dropdownTeams {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    display: none;
+    background: black;
+    box-shadow: 0px 8px 16px 1px rgba(0, 0, 0, 0.6);
 }
 
-ul li:hover ul.dropdown {
+.centerSide ul li ul.dropdown li ul.dropdownTeams li {
+    height: 60px;
+    min-width: 120px;
+}
+
+.centerSide ul li ul.dropdown li ul.dropdownTeams li a {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.centerSide ul li:hover > ul.dropdown {
     display: block;
+}
+
+.centerSide ul li ul.dropdown li:hover > ul.dropdownTeams {
+    display: block;
+}
+
+.centerSide ul li:hover > a {
+    background: #1F1F1F;
 }
 
 .rightSide {
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-start;
+    margin-right: 25px;
     flex: 2;
 }
 
 .rightSide ul {
     display: flex;
-    padding-right: 30px;
     padding-top: 5px;
     gap: 25px;
 }
