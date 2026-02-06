@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import TopBar from './components/TopBar/TopBar'
 import Header from './components/Header/Header'
 import HomePage from './components/HomePage/HomePage'
+import Footer from './components/Footer/Footer'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -10,6 +10,7 @@ function App() {
     <>
       <Header />
         <HomePage />
+        <Footer />
     </>
   )
 }
