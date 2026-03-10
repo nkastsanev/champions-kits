@@ -80,7 +80,7 @@ ul {
 
 .centerSide ul li {
     position: relative;
-    height: 75px;
+    height: 80px;
 }
 
 .centerSide ul li a {
@@ -171,6 +171,54 @@ ul {
     width: 35px;
 }
 
+.rightSide ul li {
+  position: relative;
+}
+
+.rightSide ul li .dropdown {
+  position: absolute;
+  top: 52px;
+  left: -40px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+
+  background: black;
+  min-width: 120px;
+
+  box-shadow: 0 8px 16px rgba(0,0,0,0.6);
+
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+
+  z-index: 999;
+}
+
+.rightSide ul li:hover .dropdown {
+  opacity: 1;
+  visibility: visible;
+}
+
+.rightSide ul li .dropdown li {
+  height: 40px;
+  display: flex;
+}
+
+.rightSide ul li .dropdown li a {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: background 0.2s ease;
+}
+
+.rightSide ul li .dropdown li:hover {
+  background-color: #1F1F1F;
+}
+
 .searchBar {
     display: flex;
     margin-right: 25px;
@@ -202,6 +250,24 @@ ul {
 .iconProfile {
   font-size: 35px;
   cursor: pointer;
+}
+
+.profileItem {
+  position: relative;
+}
+
+.dropdown::before {
+  content: "";
+  position: absolute;
+  top: -15px;
+  left: 0;
+  width: 100%;
+  height: 15px;
+}
+
+.profileItem:hover .dropdown {
+  opacity: 1;
+  visibility: visible;
 }
 
 .iconCart {

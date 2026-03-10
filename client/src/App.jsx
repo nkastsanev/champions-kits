@@ -1,7 +1,9 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState } from 'react'
 import Header from './components/Header/Header'
 import HomePage from './components/HomePage/HomePage'
 import AuthModal from './components/AuthModal/AuthModal'
+import ProfilePage from "./components/ProfilePage/ProfilePage";
 import Footer from './components/Footer/Footer'
 
 function App() {
@@ -9,13 +11,20 @@ function App() {
 
   return (
     <>
-      <Header openAuth={() => setIsAuthOpen(true)} />
-      <HomePage />
-      <Footer />
+      <BrowserRouter>
+        <Header openAuth={() => setIsAuthOpen(true)} />
 
-      {isAuthOpen && (
-        <AuthModal closeAuth={() => setIsAuthOpen(false)} />
-      )}
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+        </Routes>
+
+        <Footer />
+
+        {isAuthOpen && (
+          <AuthModal closeAuth={() => setIsAuthOpen(false)} />
+        )}
+      </BrowserRouter>
     </>
   )
 }
