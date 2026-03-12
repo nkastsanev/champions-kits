@@ -1,0 +1,141 @@
+.wishlistContainer {
+    padding: 40px 50px;
+}
+
+.sectionTitle h1 {
+    font-size: 34px;
+}
+
+.wishlistContainer>p {
+    font-size: 16px;
+    color: rgb(100, 99, 99);
+    margin-top: 5px;
+}
+
+.sectionContent {
+    margin-top: 5px;
+    margin: 0 auto;
+}
+
+
+.productGrid {
+    margin: 30px 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 30px;
+}
+
+.product {
+    display: flex;
+    position: relative;
+    flex-direction: row;
+    border: 1px solid lightgray;
+    padding: 25px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+}
+
+.deleteBtn {
+  position: absolute;
+  top: 25px;
+  right: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #4a4a4a;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.deleteBtn:hover {
+  color: #e00000;
+  cursor: default;
+}
+
+.imgSection img {
+    height: 120px;
+    width: 120px;
+    border-radius: 12px;
+}
+
+.productInfo {
+    margin-left: 20px;
+    width: stretch;
+}
+
+.productInfo h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.productInfo>p:nth-of-type(1) {
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+.productInfo>p:nth-of-type(2) {
+    width: max-content;
+    padding: 5px;
+    font-size: 14px;
+    background: rgba(66, 201, 66, 0.2);
+    color: green;
+    margin-bottom: 12px;
+}
+
+.sizeSection>p:nth-of-type(1) {
+    font-size: 14px;
+    color: rgb(126, 126, 126);
+    margin-bottom: 10px;
+}
+
+.sizeSection ul {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.sizeSection ul li {
+    display: block;
+    padding: 5px;
+    border: 1px solid lightgray;
+    min-width: 35px;
+    text-align: center;
+    border-radius: 5px;
+}
+
+.sizeSection button {
+    width: stretch;
+    color: black;
+    background-color: #ecc030;
+    font-size: 14px;
+    font-weight: 550;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.sizeSection button svg {
+    font-size: 18px;
+}
+
+.sizeSection button:hover {
+    cursor: pointer;
+}
+
+/* @media (max-width: 1212px) {
+    .product {
+        width: 450px;
+    }
+
+    .productGrid {
+        justify-items: center;
+    }
+} */

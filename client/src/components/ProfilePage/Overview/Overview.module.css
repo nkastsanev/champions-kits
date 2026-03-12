@@ -1,0 +1,177 @@
+.overviewContainer {
+    padding: 40px 50px;
+}
+
+.sectionTitle h1{
+    font-size: 34px;
+}
+
+.sectionContent {
+    margin-top: 5px;
+}
+
+.welcomeTexts p {
+    margin-bottom: 5px;
+}
+
+.welcomeTexts p:nth-child(1) {
+    font-size: 21px;
+    color: gray;
+}
+
+.welcomeTexts p:nth-child(2) {
+    font-size: 16px;
+    color: rgb(100, 99, 99);
+}
+
+.stats {
+    margin: 30px 0;
+    display: flex;
+    gap: 20px;
+}
+
+.card {
+    flex: 1;
+    min-height: 110px;
+    max-width: 270px;
+
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid lightgray;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.statsInfo {
+    flex: 1;
+}
+
+.statsIcon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 50px;
+    height: 50px;
+
+    font-size: 26px;
+    padding: 8px;
+    border-radius: 12px;
+}
+
+.ordersIcon {
+    color: rgb(61, 61, 214);
+    background-color: rgba(81, 81, 231, 0.15);
+}
+
+.wishlistIcon {
+    color: rgb(209, 54, 54);
+    background-color: rgba(231, 81, 101, 0.15);
+}
+
+.pointsIcon {
+    color: rgb(175, 156, 48);
+    background-color: rgba(236, 196, 17, 0.3);
+}
+
+.spentIcon {
+    color: green;
+    background-color: rgba(26, 194, 49, 0.15);
+}
+
+.statsInfo p {
+    font-size: 16px;
+    color: rgb(100, 99, 99);
+    margin-bottom: 10px;
+}
+
+.statsInfo h3 {
+    font-size: 28px;
+    font-weight: 300;
+}
+
+.recentOrders h2 {
+    margin-bottom: 20px;
+}
+
+.order {
+    border: 1px solid lightgray;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 20px;
+    margin-bottom: 10px;
+    border-radius: 12px;
+    max-width: 80vw;
+}
+
+.order:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.order:last-child {
+    margin-bottom: 0;
+}
+
+.orderInfo {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.orderId {
+    text-align: center;
+    justify-content: center;
+}
+
+.orderStatus {
+    background-color: rgb(24, 153, 24, 0.3);
+    border-radius: 12px;
+    font-size: 14px;
+    color: green;
+    padding: 2px 10px;
+}
+
+.orderStats {
+    flex: 1;
+}
+
+.orderItem {
+    margin-bottom: 5px;
+}
+
+.orderDate {
+    color: rgb(126, 126, 126);
+    font-size: 14px;
+}
+
+.orderPrice {
+    margin-right: 20px;
+}
+
+.orderPrice p {
+    font-size: 20px;
+    font-weight: 100;
+}
+
+.detailsBtn {
+    padding: 10px;
+    background-color: black;
+    border-radius: 12px;
+}
+
+.detailsBtn a {
+    text-decoration: none;
+    color: white;
+    font-size: 15px;
+}

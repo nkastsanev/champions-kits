@@ -1,0 +1,77 @@
+.loginSection h3 {
+    text-align: center;
+    padding: 20px 20px 5px;
+    font-size: 22px;
+    font-weight: 600;
+    color: #ccc;
+}
+
+.loginSection form {
+    padding: 20px;
+    padding-top: 0px;
+}
+
+.loginSection form label {
+    display: block;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    color: #ccc;
+    font-weight: 500;
+}
+
+.loginSection form input {
+    width: 100%;
+    padding: 13px;
+    border-radius: 10px;
+    border: 1px solid #2a2a2a;
+    background: #1c1c1c;
+    color: #fff;
+    font-size: 14px;
+    transition: 0.25s;
+}
+
+
+.loginSection form input:focus {
+    outline: none;
+    border-color: #FFD700;
+    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.25);
+}
+
+.btnContainer {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.loginSection form input.inputError {
+    border: 2px solid red;
+}
+
+.loginSection form input.inputError:focus {
+    box-shadow: none;
+    border-color: red;
+}
+
+.error {
+    color: rgb(204, 6, 6);
+    text-align: center;
+    margin: 15px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.loginBtn {
+    background: linear-gradient(135deg, #FFD700, #c9a400);
+    padding: 12px 26px;
+    border: none;
+    border-radius: 10px;
+    color: #000;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.loginBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(255, 215, 0, 0.25);
+}

@@ -1,0 +1,124 @@
+.personalContainer {
+    padding: 40px 50px;
+}
+
+.sectionTitle h1 {
+    font-size: 34px;
+}
+
+.sectionContent>p:nth-of-type(1) {
+    font-size: 16px;
+    color: rgb(100, 99, 99);
+    margin-top: 5px;
+}
+
+.accountDetails {
+    margin-top: 30px;
+    max-width: 1000px;
+}
+
+.accountDetails .textContainer p {
+    font-size: 14px;
+    color: rgb(100, 99, 99);
+    margin-top: 5px;
+}
+
+.upperSection {
+    padding: 30px;
+    padding-bottom: 20px;
+    border: 1px solid lightgray;
+    border-bottom: 0;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.left {
+    display: flex;
+    align-items: center;
+}
+
+.icon {
+    height: 50px;
+    width: 50px;
+    margin-right: 15px;
+    font-size: 28px;
+    color: rgb(61, 61, 214);
+    background-color: rgba(81, 81, 231, 0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.accountDetailsForm {
+    gap: 20px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    border: 1px solid lightgray;
+    border-radius: 12px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-top: 0;
+    padding: 30px;
+    padding-top: 20px;
+}
+
+.formContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.formContainer label {
+    font-size: 14px;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.formContainer input {
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background-color: rgb(206, 206, 206, 0.3);
+}
+
+.buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.editBtn,
+.saveBtn,
+.cancelBtn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    border: 1px solid lightgray;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.editBtn {
+    color: black;
+}
+
+.saveBtn {
+    background-color: black;
+    color: white;
+}
+
+@media (max-width: 660px) {
+    .accountDetailsForm {
+        grid-template-columns: repeat(1, 1fr);
+        ;
+    }
+
+}
