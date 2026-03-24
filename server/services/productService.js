@@ -162,7 +162,7 @@ const productService = {
                     WHERE p.Id = @Id
                     `)
 
-        if (productResult.recordset.length > 0) {
+        if (productResult.recordset.length === 0) {
             throw new Error("Product not found!")
         }
 

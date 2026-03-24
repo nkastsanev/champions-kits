@@ -2,13 +2,13 @@ import sql from "mssql/msnodesqlv8.js";
 import { connectDB } from "../db.js";
 
 const allowedOrderTransitions = {
-    new: ["processing", "cancelled"],
+    pending: ["processing", "cancelled"],
 
-    processing: ["shipped", "cancelled"],
+    processing: ["delivered", "cancelled"],
 
-    shipped: ["delivered"],
+    delivered: ["completed"],
 
-    delivered: ["returned"],
+    completed: ["returned"],
 
     returned: [],
 
@@ -164,7 +164,7 @@ const orderService = {
             .input("PaymentReference", sql.NVarChar, null)
             .input("UsedBonusPoints", sql.Int, usedBonusPoints ?? 0)
             .input("DiscountCode", sql.NVarChar, discountCode ?? null)
-            .input("OrderStatus", sql.NVarChar, "new")
+            .input("OrderStatus", sql.NVarChar, "pending")
             .input("Subtotal", sql.Decimal(10, 2), subtotal)
             .input("DeliveryPrice", sql.Decimal(10, 2), deliveryPrice)
             .input("DiscountAmount", sql.Decimal(10, 2), discountAmount)
@@ -336,8 +336,8 @@ const orderService = {
 
         const allowed = allowedOrderTransitions[prevStatus] || [];
 
-        if (newStatus === "shipped" && order.PaymentMethod === "card" && order.PaymentStatus !== "paid") {
-            throw new Error("The order cannot be shipped, because it's unpaid")
+        if (newStatus === "delivered" && order.PaymentMethod === "card" && order.PaymentStatus !== "paid") {
+            throw new Error("The order cannot be delivered, because it's unpaid")
         }
 
         if (!allowed.includes(newStatus)) {
@@ -353,7 +353,7 @@ const orderService = {
 
         }
 
-        if (newStatus === "delivered" && order.PaymentStatus === "paid" && order.UserId) {
+        if (newStatus === "completed" && order.PaymentStatus === "paid" && order.UserId) {
             await this.addBonusPoints(order);
         }
 

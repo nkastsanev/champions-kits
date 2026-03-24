@@ -1,70 +1,76 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { AiFillHome } from "react-icons/ai";
-import { FaTruck } from "react-icons/fa";
-import { FaHeart } from "react-icons/fa";
-import { IoPersonSharp } from "react-icons/io5";
-import { FaLock } from "react-icons/fa";
+import { MdDashboard } from "react-icons/md";
+import { BsBoxSeamFill } from "react-icons/bs";
+import { FaShoppingCart } from "react-icons/fa";
+import { FaUsers } from "react-icons/fa";
+import { BiSolidCategory } from "react-icons/bi";
 import { RiLogoutBoxRFill } from "react-icons/ri";
-import styles from './ProfilePage.module.css';
+import styles from './AdminPanel.module.css';
 
-const ProfilePage = () => {
+
+const AdminPanel = () => {
 
   return (
-    <div className={styles.ProfilePage}>
+    <div className={styles.AdminPanel}>
       <aside className={styles.sidebar}>
         <nav>
-
           <NavLink
-            to="/profile"
+            to="/admin"
             end
             className={({ isActive }) =>
               `${styles.menuItem} ${isActive ? styles.active : ""}`
             }
           >
-            <span className={styles.icon}><AiFillHome /></span>
-            Overview
+            <span className={styles.icon}><MdDashboard /></span>
+            Dashboard
           </NavLink>
 
-          <NavLink to="/profile/orders"
+          <NavLink
+            to="/admin/products"
             className={({ isActive }) =>
               `${styles.menuItem} ${isActive ? styles.active : ""}`
-            }>
-            <span className={styles.icon}><FaTruck /></span>
+            }
+          >
+            <span className={styles.icon}><BsBoxSeamFill /></span>
+            Products
+          </NavLink>
+
+          <NavLink
+            to="/admin/orders"
+            className={({ isActive }) =>
+              `${styles.menuItem} ${isActive ? styles.active : ""}`
+            }
+          >
+            <span className={styles.icon}><FaShoppingCart /></span>
             Orders
           </NavLink>
 
           <NavLink
-            to="/profile/wishlist"
+            to="/admin/users"
             className={({ isActive }) =>
               `${styles.menuItem} ${isActive ? styles.active : ""}`
-            }>
-            <span className={styles.icon}><FaHeart /></span>
-            Wishlist
+            }
+          >
+            <span className={styles.icon}><FaUsers /></span>
+            Users
           </NavLink>
 
           <NavLink
-            to="/profile/personal"
+            to="/admin/categories"
             className={({ isActive }) =>
               `${styles.menuItem} ${isActive ? styles.active : ""}`
-            }>
-            <span className={styles.icon}><IoPersonSharp /></span>
-            Personal Info
-          </NavLink>
-
-          <NavLink
-            to="/profile/security"
-            className={({ isActive }) =>
-              `${styles.menuItem} ${isActive ? styles.active : ""}`
-            }>
-            <span className={styles.icon}><FaLock /></span>
-            Security
+            }
+          >
+            <span className={styles.icon}><BiSolidCategory /></span>
+            Categories
           </NavLink>
 
           <NavLink
             to="/"
             className={({ isActive }) =>
               `${styles.menuItem} ${styles.logout} ${isActive ? styles.active : ""}`
-            }>
+            }
+          >
             <span className={styles.icon}><RiLogoutBoxRFill /></span>
             Log Out
           </NavLink>
@@ -73,10 +79,10 @@ const ProfilePage = () => {
       </aside>
 
       <main className={styles.mainContent}>
-        <Outlet />
+            <Outlet />
       </main>
     </div>
   );
 };
 
-export default ProfilePage;
+export default AdminPanel;

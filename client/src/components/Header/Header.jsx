@@ -5,6 +5,7 @@ import { IoMdPerson } from "react-icons/io";
 import { MdAdminPanelSettings } from "react-icons/md";
 import { BsCart2 } from "react-icons/bs";
 import AuthModal from '../AuthModal/AuthModal';
+import { Link } from 'react-router-dom';
 
 const Header = ({ openAuth }) => {
 
@@ -23,8 +24,8 @@ const Header = ({ openAuth }) => {
         <div className={styles.leftSide}>
 
           <div className={styles.logoWrapper}>
-            <a href="#"><MdAdminPanelSettings className={styles.iconAdmin} /></a>
-            <a href="#"><img src="/horizontal_logo.png" alt='Logo'></img></a>
+            <Link to="/admin"><MdAdminPanelSettings className={styles.iconAdmin} /></Link>
+            <Link to="/"><img src="/horizontal_logo.png" alt='Logo'></img></Link>
           </div>
 
         </div>
@@ -134,9 +135,9 @@ const Header = ({ openAuth }) => {
                 <IoMdPerson className={styles.iconProfile} />
               </a>
               <ul className={styles.dropdown}>
-                <li><a href="">Profile</a></li>
-                <li><a href="">My Orders</a></li>
-                <li><a href="">Log Out</a></li>
+                <li><Link to="/profile">Profile</Link></li>
+                <li><Link to="/profile/orders">My Orders</Link></li>
+                <li><Link to="/">Log Out</Link></li>
               </ul>
             </li>
 
