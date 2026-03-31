@@ -49,18 +49,18 @@
 }
 
 .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     margin: 30px 0;
-    display: flex;
     gap: 20px;
 }
 
 .card {
-    flex: 1;
-    min-height: 110px;
-    max-width: 370px;
+    min-height: 100px;
     border-radius: 12px;
     padding: 20px;
     border: 1px solid lightgray;
+    background-color: white;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -551,12 +551,13 @@
     }
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 955px) {
     .productsContainer {
         padding: 24px 20px;
     }
 
     .stats {
+        display: flex;
         flex-direction: column;
     }
 

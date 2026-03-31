@@ -31,13 +31,13 @@ const Security = () => (
 
           <form className={styles.passwordForm} action="">
             <label htmlFor="currentPassword">Current Password</label>
-            <input type="password" />
+            <input type="password" placeholder='Current password' />
 
             <label htmlFor="newPassword">New Password</label>
-            <input type="password" />
+            <input type="password" placeholder='New Password'/>
 
             <label htmlFor="confirmPassword">Confirm New Password</label>
-            <input type="password" />
+            <input type="password" placeholder='Confirm New Password'/>
 
             <div className={styles.btnContainer}>
               <button type="submit" className={styles.updateBtn}>

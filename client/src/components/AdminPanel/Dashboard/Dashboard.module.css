@@ -26,13 +26,13 @@
 }
 
 .card {
-    flex: 1;
-    min-height: 160px;
-    max-width: 270px;
+    width: 100%;
+    min-height: 100px;
 
     border-radius: 12px;
     padding: 20px;
     border: 1px solid lightgray;
+    background-color: white;
 
     display: flex;
     justify-content: space-between;
@@ -104,6 +104,7 @@
     flex: 1;
     flex-direction: column;
     border: 1px solid lightgray;
+    background-color: white;
     border-radius: 12px;
     padding: 30px;
 }
@@ -218,4 +219,15 @@
     font-size: 14px;
 }
 
-/* 1186px */
+@media only screen and (max-width: 1250px){
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media only screen and (max-width: 768px){
+    .stats {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}

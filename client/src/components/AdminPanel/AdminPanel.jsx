@@ -56,13 +56,13 @@ const AdminPanel = () => {
           </NavLink>
 
           <NavLink
-            to="/admin/categories"
+            to="/admin/catalog"
             className={({ isActive }) =>
               `${styles.menuItem} ${isActive ? styles.active : ""}`
             }
           >
             <span className={styles.icon}><BiSolidCategory /></span>
-            Categories
+            Catalog
           </NavLink>
 
           <NavLink

@@ -27,6 +27,7 @@
     padding: 30px;
     padding-bottom: 20px;
     border: 1px solid lightgray;
+    background-color: white;
     border-bottom: 0;
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
@@ -59,6 +60,7 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     border: 1px solid lightgray;
+    background-color: white;
     border-radius: 12px;
     border-top-left-radius: 0;
     border-top-right-radius: 0;

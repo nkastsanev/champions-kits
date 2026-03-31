@@ -1,0 +1,184 @@
+.upperSection {
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.addBtn {
+    background-color: black;
+    color: white;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    height: 40px;
+    padding: 5px 15px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    cursor: pointer;
+    margin-left: auto;
+}
+
+.addBtn:hover {
+    opacity: 0.85;
+}
+
+.toolbar {
+    display: flex;
+    gap: 12px;
+    margin: 20px 0;
+}
+
+.filter {
+    height: 38px;
+    padding: 0 12px;
+    border-radius: 10px;
+    border: 1px solid lightgray;
+}
+
+.tableWrapper {
+    border: 1px solid lightgray;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.teamsTable {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
+    border-radius: 12px 12px 0 0;
+    border: 1px solid lightgray;
+    border-bottom: none;
+}
+
+.teamsTable th {
+    background-color: #d3d3d3;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    padding: 14px;
+}
+
+.badge {
+    background: rgba(0,0,0,0.05);
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-left: 25px;
+}
+
+.teamsTable td {
+    padding: 16px;
+    text-align: center;
+    border-top: 1px solid #eee;
+}
+
+.teamsTable tr{
+    background-color: inherit;
+}
+
+.teamsTable tr:hover {
+    background: #fafafa;
+}
+
+.teamsTable tr td {
+    border-bottom: 1px solid lightgray;
+}
+
+.football {
+    background-color: rgba(75, 98, 226, 0.4);
+}
+
+.basketball {
+    background-color: rgb(218, 148, 18, 0.6);
+}
+
+.actions {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.edit, .delete {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    background-color: inherit;
+}
+
+.edit {
+    color: #3d54d6;
+}
+
+.edit:hover {
+    background: rgba(81,81,231,0.15);
+}
+
+.delete {
+    color: #d13636;
+}
+
+.delete:hover {
+    background: rgba(231,81,101,0.15);
+}
+
+.card {
+    background-color: white;
+    border: 1px solid lightgray;
+    border-radius: 8px;
+    padding: 10px;
+    min-height: 130px;
+    position: relative;
+}
+
+.card:hover {
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.cardsWrapper {
+    display: none;
+}
+
+.cardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cardBody {
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.cardActions {
+  display: flex;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}
+
+@media screen and (max-width: 761px){
+    .cardsWrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .tableWrapper {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 520px) {
+    .card {
+        min-height: 140px;
+    }
+}

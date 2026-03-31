@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useState } from 'react'
 import Header from './components/Header/Header'
 import HomePage from './components/HomePage/HomePage'
@@ -16,7 +16,11 @@ import Dashboard from "./components/AdminPanel/Dashboard/Dashboard";
 import Products from "./components/AdminPanel/Products/Products";
 import AdminOrders from "./components/AdminPanel/Orders/Orders";
 import Users from "./components/AdminPanel/Users/Users";
-import Categories from "./components/AdminPanel/Categories/Categories";
+
+import Catalog from "./components/AdminPanel/Catalog/Catalog";
+import CategoriesList from "./components/AdminPanel/Catalog/CategoriesList/CategoriesList";
+import LeaguesList from "./components/AdminPanel/Catalog/LeaguesList/LeaguesList";
+import TeamsList from "./components/AdminPanel/Catalog/TeamsList/TeamsList";
 
 import Footer from './components/Footer/Footer';
 
@@ -44,7 +48,12 @@ function App() {
             <Route path="products" element={<Products />} />
             <Route path="orders" element={<AdminOrders />} />
             <Route path="users" element={<Users />} />
-            <Route path="categories" element={<Categories />} />
+            <Route path="catalog" element={<Catalog />}>
+              <Route index element={<Navigate to="categories" replace />} />
+              <Route path="categories" element={<CategoriesList />} />
+              <Route path="leagues" element={<LeaguesList />} />
+              <Route path="teams" element={<TeamsList />} />
+            </Route>
           </Route>
 
         </Routes>
