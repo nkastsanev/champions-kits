@@ -23,6 +23,7 @@ import LeaguesList from "./components/AdminPanel/Catalog/LeaguesList/LeaguesList
 import TeamsList from "./components/AdminPanel/Catalog/TeamsList/TeamsList";
 
 import Footer from './components/Footer/Footer';
+import { UserProvider } from "./contexts/UserContext";
 
 function App() {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
@@ -30,39 +31,42 @@ function App() {
   return (
     <>
       <BrowserRouter>
-        <Header openAuth={() => setIsAuthOpen(true)} />
+        <UserProvider>
+          <Header openAuth={() => setIsAuthOpen(true)} />
 
-        <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Routes>
+            <Route path="/" element={<HomePage />} />
 
-          <Route path="/profile" element={<ProfilePage />}>
-            <Route index element={<Overview />} />
-            <Route path="orders" element={<Orders />} />
-            <Route path="wishlist" element={<Wishlist />} />
-            <Route path="personal" element={<PersonalInfo />} />
-            <Route path="security" element={<Security />} />
-          </Route>
 
-          <Route path="/admin" element={<AdminPanel />}>
-            <Route index element={<Dashboard />} />
-            <Route path="products" element={<Products />} />
-            <Route path="orders" element={<AdminOrders />} />
-            <Route path="users" element={<Users />} />
-            <Route path="catalog" element={<Catalog />}>
-              <Route index element={<Navigate to="categories" replace />} />
-              <Route path="categories" element={<CategoriesList />} />
-              <Route path="leagues" element={<LeaguesList />} />
-              <Route path="teams" element={<TeamsList />} />
+            <Route path="/profile" element={<ProfilePage />}>
+              <Route index element={<Overview />} />
+              <Route path="orders" element={<Orders />} />
+              <Route path="wishlist" element={<Wishlist />} />
+              <Route path="personal" element={<PersonalInfo />} />
+              <Route path="security" element={<Security />} />
             </Route>
-          </Route>
 
-        </Routes>
+            <Route path="/admin" element={<AdminPanel />}>
+              <Route index element={<Dashboard />} />
+              <Route path="products" element={<Products />} />
+              <Route path="orders" element={<AdminOrders />} />
+              <Route path="users" element={<Users />} />
+              <Route path="catalog" element={<Catalog />}>
+                <Route index element={<Navigate to="categories" replace />} />
+                <Route path="categories" element={<CategoriesList />} />
+                <Route path="leagues" element={<LeaguesList />} />
+                <Route path="teams" element={<TeamsList />} />
+              </Route>
+            </Route>
 
-        <Footer />
+          </Routes>
 
-        {isAuthOpen && (
-          <AuthModal closeAuth={() => setIsAuthOpen(false)} />
-        )}
+          <Footer />
+
+          {isAuthOpen && (
+            <AuthModal closeAuth={() => setIsAuthOpen(false)} />
+          )}
+        </UserProvider>
       </BrowserRouter>
     </>
   )

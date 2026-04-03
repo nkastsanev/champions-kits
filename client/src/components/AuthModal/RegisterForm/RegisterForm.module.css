@@ -62,6 +62,7 @@
 .registerBtn {
     background: linear-gradient(135deg, #FFD700, #c9a400);
     padding: 12px 26px;
+    margin-top: 10px;
     border: none;
     border-radius: 10px;
     color: #000;

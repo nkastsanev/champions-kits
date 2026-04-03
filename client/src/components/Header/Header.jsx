@@ -1,13 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import styles from './Header.module.css';
-import { AiOutlineSearch } from "react-icons/ai";
-import { IoMdPerson } from "react-icons/io";
+import { IoMdPerson, IoMdSearch } from "react-icons/io";
 import { MdAdminPanelSettings } from "react-icons/md";
-import { BsCart2 } from "react-icons/bs";
+import { FaHeart, FaShoppingCart } from "react-icons/fa";
 import AuthModal from '../AuthModal/AuthModal';
 import { Link } from 'react-router-dom';
+import { useUserContext } from '../../contexts/UserContext';
 
 const Header = ({ openAuth }) => {
+
+  const { user, logout } = useUserContext();
+
+  const userInitial = user?.FirstName?.charAt(0).toUpperCase() || "";
+
+  const isAdmin = user && (user.Role === 1 || user.Role === 2);
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    logout();
+  }
 
   return (
     <header className={styles.header}>
@@ -24,7 +35,9 @@ const Header = ({ openAuth }) => {
         <div className={styles.leftSide}>
 
           <div className={styles.logoWrapper}>
-            <Link to="/admin"><MdAdminPanelSettings className={styles.iconAdmin} /></Link>
+            {isAdmin &&(
+              <Link to="/admin"><MdAdminPanelSettings className={styles.iconAdmin} /></Link>
+            )}
             <Link to="/"><img src="/horizontal_logo.png" alt='Logo'></img></Link>
           </div>
 
@@ -116,36 +129,55 @@ const Header = ({ openAuth }) => {
         </div>
 
         <div className={styles.rightSide}>
-          <div className={styles.searchBar}>
-            <input type="text" name="search" placeholder="Search..." />
-            <a href="#">
-              <AiOutlineSearch className={styles.iconSearch} />
-            </a>
-          </div>
 
-          <ul>
+          <ul className={styles.rightSideMainIcons}>
+            <li>
+              <a href="#">
+                <IoMdSearch className={styles.iconSearch} />
+              </a>
+            </li>
+
             <li className={styles.profileItem}>
               <a
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
-                  openAuth();
+                  if (!user) openAuth();
                 }}
               >
-                <IoMdPerson className={styles.iconProfile} />
+                {!user && (
+                  <IoMdPerson className={styles.iconProfile} />
+                )}
+
+                {user && (
+                  <p className={styles.profileAvatar}>{userInitial}</p>
+                )}
               </a>
-              <ul className={styles.dropdown}>
-                <li><Link to="/profile">Profile</Link></li>
-                <li><Link to="/profile/orders">My Orders</Link></li>
-                <li><Link to="/">Log Out</Link></li>
-              </ul>
+
+              {user && (
+                <ul className={styles.dropdown}>
+                  <li><Link to="/profile">Profile</Link></li>
+                  <li><Link to="/profile/orders">My Orders</Link></li>
+                  <li>
+                    <a href="#" onClick={handleLogout}>Log Out</a>
+                  </li>
+                </ul>
+              )}
+
             </li>
 
             <li>
               <a href="#">
-                <BsCart2 className={styles.iconCart} />
+                <FaHeart className={styles.iconWishlist} />
               </a>
             </li>
+
+            <li>
+              <a href="#">
+                <FaShoppingCart className={styles.iconCart} />
+              </a>
+            </li>
+
           </ul>
 
         </div>

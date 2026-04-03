@@ -7,24 +7,24 @@
 }
 
 .topBar {
-  height: 36px;
-  background-color: #d1a71d;
-  display: flex;
-  justify-content: center;
-  gap: 40px;
-  align-items: center;
-  font-size: 12.5px;
-  letter-spacing: 0.5px;
-  font-weight: 500;
-  color: #000000;
+    height: 36px;
+    background-color: #d1a71d;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    align-items: center;
+    font-size: 12.5px;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+    color: #000000;
 }
 
 .topBarText {
-  white-space: nowrap;
-  opacity: 0.9;
-  display: flex;
-  align-items: center;
-  gap: 5px;
+    white-space: nowrap;
+    opacity: 0.9;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
 ul {
@@ -36,19 +36,21 @@ ul {
     align-items: center;
     background: black;
     height: 80px;
+    padding: 0 20px;
+    gap: 40px;
 }
 
 .leftSide,
 .rightSide,
 .centerSide {
-    flex-shrink: 1;
+    flex-shrink: 0;
 }
 
 .leftSide {
     display: flex;
-    justify-content: flex-end;
-    margin-left: 25px;
-    flex: 2;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
 }
 
 .leftSide img {
@@ -63,13 +65,22 @@ ul {
 }
 
 .iconAdmin {
-  font-size: 40px;
-  margin-right: 25px;
-  cursor: pointer;
+    font-size: 36px;
+    margin-right: 15px;
+    cursor: pointer;
+}
+
+.rightSide .rightSideMainIcons > li > a, .iconAdmin {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.rightSide .rightSideMainIcons > li > a:hover, .iconAdmin:hover {
+  transform: scale(1.05);
+  opacity: 0.8;
 }
 
 .centerSide {
-    flex: 3;
+    flex: 0 0 auto;
 }
 
 .centerSide ul {
@@ -140,29 +151,28 @@ ul {
     justify-content: center;
 }
 
-.centerSide ul li:hover > ul.dropdown {
+.centerSide ul li:hover>ul.dropdown {
     display: block;
 }
 
-.centerSide ul li ul.dropdown li:hover > ul.dropdownTeams {
+.centerSide ul li ul.dropdown li:hover>ul.dropdownTeams {
     display: block;
 }
 
-.centerSide ul li:hover > a {
+.centerSide ul li:hover>a {
     background: #1F1F1F;
 }
 
 .rightSide {
     display: flex;
-    justify-content: flex-start;
-    margin-right: 25px;
-    flex: 2;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
 }
 
 .rightSide ul {
     display: flex;
-    padding-top: 5px;
-    gap: 25px;
+    gap: 20px;
 }
 
 .rightSide a {
@@ -172,66 +182,53 @@ ul {
 }
 
 .rightSide ul li {
-  position: relative;
+    position: relative;
 }
 
 .rightSide ul li .dropdown {
-  position: absolute;
-  top: 52px;
-  left: -40px;
+    position: absolute;
+    top: 56px;
+    left: -40px;
 
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
 
-  background: black;
-  min-width: 120px;
+    background: black;
+    min-width: 120px;
 
-  box-shadow: 0 8px 16px rgba(0,0,0,0.6);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
 
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.2s ease;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
 
-  z-index: 999;
+    z-index: 999;
 }
 
 .rightSide ul li:hover .dropdown {
-  opacity: 1;
-  visibility: visible;
+    opacity: 1;
+    visibility: visible;
 }
 
 .rightSide ul li .dropdown li {
-  height: 40px;
-  display: flex;
+    height: 40px;
+    display: flex;
 }
 
 .rightSide ul li .dropdown li a {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  transition: background 0.2s ease;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: background 0.2s ease;
 }
 
 .rightSide ul li .dropdown li:hover {
-  background-color: #1F1F1F;
+    background-color: #1F1F1F;
 }
 
-.searchBar {
-    display: flex;
-    margin-right: 25px;
-    margin-top: 5px;
-    border: 2px solid white;
-    border-radius: 8px;
-}
-
-.searchBar input {
-    height: 35px;
-    padding: 10px;
-    border: 2px solid white;
-}
 
 .centerSide .sale {
     color: red;
@@ -241,42 +238,67 @@ ul {
     color: rgba(250, 221, 59, 0.904);
 }
 
-.iconSearch {
-    font-size: 25px;
+.iconProfile, .iconSearch {
+    font-size: 32px;
     cursor: pointer;
-    margin: 5px;
 }
 
-.iconProfile {
-  font-size: 35px;
-  cursor: pointer;
+.profileAvatar {
+    width: 28px; 
+    height: 28px;
+    font-size: 20px;
+    border-radius: 50%;
+    color: black;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0; 
+    line-height: 1;
 }
 
 .profileItem {
-  position: relative;
+    position: relative;
 }
 
 .dropdown::before {
-  content: "";
-  position: absolute;
-  top: -15px;
-  left: 0;
-  width: 100%;
-  height: 15px;
+    content: "";
+    position: absolute;
+    top: -20px;
+    left: 0;
+    width: 100%;
+    height: 20px;
 }
 
 .profileItem:hover .dropdown {
-  opacity: 1;
-  visibility: visible;
+    opacity: 1;
+    visibility: visible;
 }
 
-.iconCart {
-  font-size: 30px;
-  cursor: pointer;
+.iconCart,
+.iconWishlist {
+    font-size: 26px;
+    cursor: pointer;
+}
+
+.rightSide a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .header a {
     font-weight: bold;
     color: white;
     text-decoration: none;
+}
+
+@media screen and (max-width:1100px){
+    .leftSide {
+        justify-content: flex-end;
+    }
+
+    .rightSide {
+        justify-content: flex-start;
+    }
 }

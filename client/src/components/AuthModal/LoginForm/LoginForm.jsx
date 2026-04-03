@@ -46,6 +46,10 @@ const LoginForm = ({
         <p className={styles.error}>{loginErrors.password}</p>
       )}
 
+      {loginErrors.server && (
+        <p className={styles.error}>{loginErrors.server}</p>
+      )}
+
       <div className={styles.btnContainer}>
         <button disabled={loading} type="submit" className={styles.loginBtn}>
           {loading ? "Loading..." : "Login"}

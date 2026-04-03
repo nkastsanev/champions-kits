@@ -94,6 +94,10 @@ const RegisterForm = ({
         <p className={styles.error}>{registerErrors.rePassword}</p>
       )}
 
+      {registerErrors.server && (
+        <p className={styles.error}>{registerErrors.server}</p>
+      )}
+
       <div className={styles.btnContainer}>
         <button disabled={loading} type="submit" className={styles.registerBtn}>
           {loading ? "Loading..." : "Register"}

@@ -7,6 +7,8 @@ import { validateLogin, validateRegister } from "../AuthModal/authValidation";
 import LoginForm from './LoginForm/LoginForm';
 import RegisterForm from './RegisterForm/RegisterForm';
 
+import { useLogin, useRegister } from '../../api/authApi';
+
 const AuthModal = ({ closeAuth }) => {
 
   useEffect(() => {
@@ -90,11 +92,11 @@ const AuthModal = ({ closeAuth }) => {
         [name]: value
       };
 
-      if (mode === "login") {
-        setLoginErrors(validateLogin(updatedData));
-      } else {
-        setRegisterErrors(validateRegister(updatedData));
-      }
+      // if (mode === "login") {
+      //   setLoginErrors(validateLogin(updatedData));
+      // } else {
+      //   setRegisterErrors(validateRegister(updatedData));
+      // }
 
       return updatedData;
     });
@@ -110,18 +112,20 @@ const AuthModal = ({ closeAuth }) => {
         [name]: true
       }));
 
-      setLoginErrors(validateLogin(loginFormData))
+      // setLoginErrors(validateLogin(loginFormData))
     } else {
       setIsRegisterTouched((prev => ({
         ...prev,
         [name]: true
       })));
 
-      setRegisterErrors(validateRegister(registerFormData))
+      // setRegisterErrors(validateRegister(registerFormData))
     }
   }
 
-  const handleLogin = (e) => {
+  const { loginUser } = useLogin();
+
+  const handleLogin = async (e) => {
     e.preventDefault();
 
     const errors = validateLogin(loginFormData);
@@ -135,14 +139,21 @@ const AuthModal = ({ closeAuth }) => {
       return;
     }
 
-    console.log(loginFormData);
+    try {
+      await loginUser(loginFormData.email, loginFormData.password);
+      closeAuth();
+      setLoginErrors({});
+      setIsLoginTouched({ email: false, password: false });
+      setLoginFormData(initialLoginFormData);
+    } catch (err) {
+      setLoginErrors({ server: err.message })
+    }
 
-    setLoginErrors({});
-    setIsLoginTouched({ email: false, password: false });
-    setLoginFormData(initialLoginFormData);
   }
 
-  const handleRegister = (e) => {
+  const { register } = useRegister();
+
+  const handleRegister = async (e) => {
     e.preventDefault();
 
     const errors = validateRegister(registerFormData);
@@ -159,12 +170,16 @@ const AuthModal = ({ closeAuth }) => {
       return;
     }
 
-    console.log(registerFormData);
+    try {
+      await register(registerFormData.firstName, registerFormData.lastName, registerFormData.email, registerFormData.password);
+      closeAuth();
+      setRegisterErrors({});
+      setIsRegisterTouched({ firstName: false, lastName: false, email: false, password: false, rePassword: false })
+      setRegisterFormData(initialRegisterFormData);
+    } catch (err) {
+      setRegisterErrors({ server: err.message })
+    }
 
-
-    setRegisterErrors({});
-    setIsRegisterTouched({ firstName: false, lastName: false, email: false, password: false, rePassword: false })
-    setRegisterFormData(initialRegisterFormData);
   }
 
 
@@ -202,7 +217,7 @@ const AuthModal = ({ closeAuth }) => {
             registerTouched={registerTouched}
             registerFormData={registerFormData}
             loading={loading}
-            />
+          />
         )}
 
       </div>
