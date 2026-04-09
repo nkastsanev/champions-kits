@@ -4,11 +4,16 @@ import styles from './CategoryModal.module.css';
 const CategoryModal = ({ initialData, onClose, onSave }) => {
 
   const [name, setName] = useState(initialData?.name ?? '');
+  const [touched, setTouched] = useState(false);
   const isEdit = initialData !== null;
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    setTouched(true);
+
     if (!name.trim()) return;
+
     onSave({ name: name.trim() });
   };
 
@@ -39,7 +44,11 @@ const CategoryModal = ({ initialData, onClose, onSave }) => {
               placeholder="Category Name"
               autoFocus
             />
+          {touched && (!name || name.trim().length === 0) && (
+            <p className={styles.error}>Please type a Category Name</p>
+          )}
           </div>
+
 
 
           <div className={styles.modalActions}>

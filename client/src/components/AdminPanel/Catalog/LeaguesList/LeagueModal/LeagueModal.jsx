@@ -17,11 +17,13 @@ const LeagueModal = ({ initialData, categories, onClose, onSave }) => {
       leagueName: leagueName.trim(),
       categoryId: Number(categoryId),
     });
+
   }
 
   useEffect(() => {
     setleagueName(initialData?.leagueName ?? '');
     setCategoryId(initialData?.categoryId ?? '');
+    
   }, [initialData]);
 
   useEffect(() => {
@@ -52,6 +54,10 @@ const LeagueModal = ({ initialData, categories, onClose, onSave }) => {
               autoFocus
             />
 
+              {touched && (!leagueName || leagueName.trim().length === 0) && (
+                <p className={styles.error}>Please type a League Name</p>
+              )}
+
             <label className={styles.label}>Category</label>
             <select
               className={styles.select}
@@ -64,7 +70,7 @@ const LeagueModal = ({ initialData, categories, onClose, onSave }) => {
                 
               {categories.map((cat) => (
                 <option key={cat.id} value={cat.id}>
-                  {cat.categoryName}
+                  {cat.name}
                 </option>
               ))}
             </select>

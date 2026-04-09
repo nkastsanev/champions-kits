@@ -3,8 +3,25 @@ import { TbTruckDelivery } from "react-icons/tb";
 import { FaRegHeart } from "react-icons/fa";
 import { GoTrophy } from "react-icons/go";
 import { FaRegMoneyBillAlt } from "react-icons/fa";
+import { useUserContext } from '../../../contexts/UserContext';
+import { useState } from 'react';
 
-const Overview = () => (
+const Overview = () => {
+  const { user } = useUserContext();
+
+  // Get the users's 5 latest orders
+  const [latestOrders, setLatestOrders] = useState([]);
+
+  // Get user's total orders count, wishlist items count and total spent (his orders (Total Price))
+  const [cardsData, setCardsData] = useState({
+    totalOrders: 0,
+    wishlistCount: 0,
+    totalSpent: 0
+  });
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  return (
   <section id="overview">
 
     <div className={styles.overviewContainer}>
@@ -16,7 +33,7 @@ const Overview = () => (
       <div className={styles.sectionContent}>
 
         <div className={styles.welcomeTexts}>
-          <p>Welcome back, Ivan Ivanov</p>
+          <p>Welcome back, {user.FirstName} {user.LastName}</p>
           <p>Here's a quick overview of your account</p>
         </div>
 
@@ -45,7 +62,7 @@ const Overview = () => (
           <div className={styles.card}>
             <div className={styles.statsInfo}>
               <p>Champions Points</p>
-              <h3>45</h3>
+              <h3>{user.BonusPoints}</h3>
             </div>
             <div className={`${styles.statsIcon} ${styles.pointsIcon}`}>
               <GoTrophy />
@@ -183,6 +200,7 @@ const Overview = () => (
       </div>
     </div>
   </section>
-);
+  )
+};
 
 export default Overview;

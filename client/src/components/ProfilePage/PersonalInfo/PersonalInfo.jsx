@@ -1,20 +1,32 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./PersonalInfo.module.css";
 import { LuUser } from "react-icons/lu";
 import { MdOutlineEdit } from "react-icons/md";
 import { MdOutlineCancel } from "react-icons/md";
 import { FiSave } from "react-icons/fi";
+import { useUserContext } from "../../../contexts/UserContext";
 
 const PersonalInfo = () => {
-
+  const { user } = useUserContext();
   const [isEditing, setIsEditing] = useState(false);
 
   const [formData, setFormData] = useState({
-    firstName: "John",
-    lastName: "Doe",
-    email: "john@email.com",
-    phone: "+359 888 123 456"
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: ""
   });
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        firstName: user.FirstName || "",
+        lastName: user.LastName || "",
+        email: user.Email || "",
+        phone: user.Phone || "" 
+      });
+    }
+  }, [user]);
 
   const [originalData, setOriginalData] = useState(formData);
 

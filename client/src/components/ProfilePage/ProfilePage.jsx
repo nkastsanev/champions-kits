@@ -6,8 +6,16 @@ import { IoPersonSharp } from "react-icons/io5";
 import { FaLock } from "react-icons/fa";
 import { RiLogoutBoxRFill } from "react-icons/ri";
 import styles from './ProfilePage.module.css';
+import { useUserContext } from "../../contexts/UserContext";
 
 const ProfilePage = () => {
+
+  const { logout } = useUserContext();
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    logout();
+  }
 
   return (
     <div className={styles.ProfilePage}>
@@ -62,6 +70,7 @@ const ProfilePage = () => {
 
           <NavLink
             to="/"
+            onClick={handleLogout}
             className={({ isActive }) =>
               `${styles.menuItem} ${styles.logout} ${isActive ? styles.active : ""}`
             }>

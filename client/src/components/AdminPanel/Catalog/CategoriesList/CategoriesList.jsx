@@ -1,49 +1,69 @@
-import styles from './CategoriesList.module.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { useCategoryApi } from '../../../../api/categoryApi';
 import CategoryModal from './CategoryModal/CategoryModal';
 import ConfirmCategoryModal from './ConfirmCategoryModal/ConfirmCategoryModal';
-
-const INITIAL_CATEGORIES = [
-  {
-    id: 1,
-    name: 'Football',
-    leagues: 6,
-    teams: 48,
-    products: 620,
-  },
-  {
-    id: 2,
-    name: 'Basketball',
-    leagues: 2,
-    teams: 30,
-    products: 230,
-  },
-];
+import styles from './CategoriesList.module.css';
 
 export default function CategoriesList() {
-  const [categories, setCategories] = useState(INITIAL_CATEGORIES);
+  const [categories, setCategories] = useState([]);
   const [modal, setModal] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleSave = (formData) => {
-    if (modal === 'add') {
-      setCategories((prev) => [
-        ...prev,
-        { id: Date.now(), leagues: 0, teams: 0, products: 0, ...formData },
-      ]);
-    } else {
-      setCategories((prev) =>
-        prev.map((c) => (c.id === modal.id ? { ...c, ...formData } : c))
-      );
+  const { getAll, create, update, remove } = useCategoryApi();
+
+  useEffect(() => {
+    loadCategories();
+  }, []);
+
+  const loadCategories = async () => {
+    try {
+      setIsLoading(true);
+      const data = await getAll();
+      
+      setCategories(data);
+    } catch (err) {
+      console.error("Error:", err.message);
+    } finally {
+      setIsLoading(false);
     }
-    setModal(null);
   };
 
-  const handleDelete = (id) => {
-    setCategories((prev) => prev.filter((c) => c.id !== id));
-    setDeleteTarget(null);
+  const handleSave = async (formData) => {
+    try {
+      if (modal === 'add') {
+        const newCategory = await create(formData.name);
+        setCategories(prev => [...prev, {
+          id: newCategory.id,
+          name: newCategory.name,
+          leagues: 0,
+          teams: 0,
+          products: 0
+        }]);
+      } else {
+        const updated = await update(modal.id, formData.name);
+        setCategories(prev => prev.map(c =>
+          c.id === modal.id ? { ...c, name: updated.name} : c
+        ));
+      }
+      setModal(null);
+    } catch (err) {
+      alert(err.message);
+    }
   };
+
+  const handleDelete = async (targetId) => {
+    try {
+      await remove(targetId);
+      setCategories(prev => prev.filter((c) => c.id !== targetId));
+      setDeleteTarget(null);
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  if (isLoading) return <div className={styles.loader}>Loading categories...</div>;
 
   return (
     <div className={styles.wrapper}>
@@ -56,11 +76,11 @@ export default function CategoriesList() {
 
       <div className={styles.grid}>
         {categories.map((cat) => (
+          
           <div key={cat.id} className={styles.card}>
+
             <div className={styles.cardHeader}>
-              <div>
-                <h3 className={styles.cardTitle}>{cat.name}</h3>
-              </div>
+              <h3 className={styles.cardTitle}>{cat.name}</h3>
             </div>
 
             <div className={styles.statsRow}>
@@ -81,18 +101,10 @@ export default function CategoriesList() {
             </div>
 
             <div className={styles.cardActions}>
-              <button
-                className={styles.editBtn}
-                onClick={() =>
-                  setModal({ id: cat.id, name: cat.name})
-                }
-              >
+              <button className={styles.editBtn} onClick={() => setModal({ id: cat.id, name: cat.name })}>
                 Edit
               </button>
-              <button
-                className={styles.deleteBtn}
-                onClick={() => setDeleteTarget(cat)}
-              >
+              <button className={styles.deleteBtn} onClick={() => setDeleteTarget(cat)}>
                 Delete
               </button>
             </div>

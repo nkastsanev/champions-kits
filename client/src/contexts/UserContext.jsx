@@ -30,10 +30,10 @@ export function UserProvider({ children }) {
     useAuth(authToken, navigate, logout);
 
     const login = (user, token) => {
-        setUser(user);
-        setAuthToken(token);
         localStorage.setItem('user', JSON.stringify(user));
         localStorage.setItem('authToken', token);
+        setUser(user);
+        setAuthToken(token);
     }
 
 

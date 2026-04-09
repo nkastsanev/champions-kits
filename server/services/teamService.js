@@ -12,7 +12,7 @@ export const teamService = {
         const pool = await connectDB();
         const result = await pool.request()
             .input("LeagueId", sql.Int, leagueId)
-            .query(`SELECT FROM dbo.Teams WHERE LeagueId = @LeagueId`);
+            .query(`SELECT * FROM dbo.Teams WHERE LeagueId = @LeagueId`);
         return result.recordset;
     },
 

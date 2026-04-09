@@ -18,10 +18,10 @@ leagueController.get('/', async (req, res) => {
 
 leagueController.post('/', authMiddleware, adminMiddleware, async (req, res) => {
 
-    const {categoryId, leagueName} = req.body;
+    const {categoryId, name} = req.body;
 
     try {
-        const league = await leagueService.create(categoryId, leagueName);
+        const league = await leagueService.create(categoryId, name);
         res.status(201).json(league);
     } catch (err) {
         res.status(400).json({message: err.message});
@@ -29,17 +29,16 @@ leagueController.post('/', authMiddleware, adminMiddleware, async (req, res) => 
 
 });
 
-leagueController.get('/category/:categoryId', async (req, res) => {
-
-    const categoryId = req.params.categoryId
+leagueController.put('/:leagueId', authMiddleware, adminMiddleware, async (req, res) => {
+    const id = req.params.leagueId;
+    const { name, categoryId } = req.body;
 
     try {
-        const leagues = await leagueService.getByCategory(categoryId);
-        res.status(200).json(leagues);
+        const updatedLeague = await leagueService.update(id, name, categoryId);
+        res.status(200).json(updatedLeague);
     } catch (err) {
-        res.status(400).json({message: "Error retrieving leagues."});
+        res.status(400).json({ message: err.message });
     }
-
 });
 
 

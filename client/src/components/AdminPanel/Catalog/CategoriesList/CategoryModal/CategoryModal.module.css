@@ -121,3 +121,9 @@
 .saveBtn:hover {
     opacity: 0.85;
 }
+
+.error {
+    color: red;
+    text-align: center;
+    margin-top: 5px;
+}

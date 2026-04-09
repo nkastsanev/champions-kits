@@ -56,27 +56,6 @@ const TeamModal = ({ initialData, leagues, categories, onClose, onSave }) => {
               autoFocus
             />
 
-            <label className={styles.label}>League</label>
-            <select
-              className={styles.select}
-              value={leagueId}
-              onChange={(e) => setLeagueId(e.target.value)}
-            >
-              {!isEdit && (
-                <option value="">Select league</option>
-              )}
-
-              {leagues.map((lea) => (
-                <option key={lea.id} value={lea.id}>
-                  {lea.leagueName}
-                </option>
-              ))}
-            </select>
-
-            {touched && !leagueId && (
-              <p className={styles.error}>Please select a league</p>
-            )}
-
             <label className={styles.label}>Category</label>
             <select
               className={styles.select}
@@ -96,6 +75,27 @@ const TeamModal = ({ initialData, leagues, categories, onClose, onSave }) => {
 
             {touched && !categoryId && (
               <p className={styles.error}>Please select a category</p>
+            )}
+
+            <label className={styles.label}>League</label>
+            <select
+              className={styles.select}
+              value={leagueId}
+              onChange={(e) => setLeagueId(e.target.value)}
+            >
+              {!isEdit && (
+                <option value="">Select league</option>
+              )}
+
+              {leagues.map((lea) => (
+                <option key={lea.id} value={lea.id}>
+                  {lea.leagueName}
+                </option>
+              ))}
+            </select>
+
+            {touched && !leagueId && (
+              <p className={styles.error}>Please select a league</p>
             )}
 
           </div>
