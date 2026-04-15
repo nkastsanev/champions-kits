@@ -2,43 +2,40 @@ import styles from './TeamModal.module.css';
 import { useState, useEffect } from 'react';
 
 const TeamModal = ({ initialData, leagues, categories, onClose, onSave }) => {
-  const [teamName, setTeamName] = useState(initialData?.teamName ?? '');
-  const [leagueId, setLeagueId] = useState(initialData?.leagueId ?? '');
-  const [categoryId, setCategoryId] = useState(initialData?.categoryId ?? '');
+  const [teamName, setTeamName] = useState('');
+  const [leagueId, setLeagueId] = useState('');
+  const [categoryId, setCategoryId] = useState('');
   const [touched, setTouched] = useState(false);
+
   const isEdit = initialData !== null;
+
+  useEffect(() => {
+    setTeamName(initialData?.name ?? '');
+    setLeagueId(initialData?.leagueId ?? '');
+    setCategoryId(initialData?.categoryId ?? '');
+  }, [initialData]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     setTouched(true);
 
-    if (!teamName.trim() || !categoryId || !leagueId) { return }
+    if (!teamName.trim() || !categoryId || !leagueId) return;
+
     onSave({
       teamName: teamName.trim(),
       leagueId: Number(leagueId),
       categoryId: Number(categoryId)
     });
-  }
+  };
 
-  useEffect(() => {
-    setTeamName(initialData?.teamName ?? '');
-    setLeagueId(initialData?.leagueId ?? '');
-    setCategoryId(initialData?.categoryId ?? '');
-  }, [initialData]);
-
-
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
-  }, []);
+  const filteredLeagues = leagues.filter(
+    l => !categoryId || l.categoryId === Number(categoryId)
+  );
 
   return (
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modalBox} onClick={(e) => e.stopPropagation()}>
+
         <div className={styles.modalHeader}>
           <h2 className={styles.modalTitle}>
             {isEdit ? 'Edit team' : 'Add team'}
@@ -47,6 +44,7 @@ const TeamModal = ({ initialData, leagues, categories, onClose, onSave }) => {
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.field}>
+
             <label className={styles.label}>Team Name</label>
             <input
               className={styles.input}
@@ -56,19 +54,24 @@ const TeamModal = ({ initialData, leagues, categories, onClose, onSave }) => {
               autoFocus
             />
 
+            {touched && (!teamName || teamName.trim().length === 0) && (
+              <p className={styles.error}>Please type a Team Name</p>
+            )}
+
             <label className={styles.label}>Category</label>
             <select
               className={styles.select}
               value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
+              onChange={(e) => {
+                setCategoryId(e.target.value);
+                setLeagueId(''); // reset league при смяна
+              }}
             >
-              {!isEdit && (
-                <option value="">Select category</option>
-              )}
+              {!isEdit && <option value="">Select category</option>}
 
-              {categories.map((cat) => (
+              {categories.map(cat => (
                 <option key={cat.id} value={cat.id}>
-                  {cat.categoryName}
+                  {cat.name}
                 </option>
               ))}
             </select>
@@ -80,16 +83,15 @@ const TeamModal = ({ initialData, leagues, categories, onClose, onSave }) => {
             <label className={styles.label}>League</label>
             <select
               className={styles.select}
+              disabled={!categoryId}
               value={leagueId}
               onChange={(e) => setLeagueId(e.target.value)}
             >
-              {!isEdit && (
-                <option value="">Select league</option>
-              )}
+              <option value="">Select league</option>
 
-              {leagues.map((lea) => (
+              {filteredLeagues.map(lea => (
                 <option key={lea.id} value={lea.id}>
-                  {lea.leagueName}
+                  {lea.name}
                 </option>
               ))}
             </select>
@@ -108,6 +110,7 @@ const TeamModal = ({ initialData, leagues, categories, onClose, onSave }) => {
               {isEdit ? 'Save changes' : 'Create'}
             </button>
           </div>
+
         </form>
       </div>
     </div>

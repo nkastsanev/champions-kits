@@ -40,7 +40,7 @@
 
 .tableWrapper {
     border: 1px solid lightgray;
-    border-radius: 12px;
+    border-radius: 12px 12px 0 0;
     overflow: hidden;
 }
 
@@ -63,7 +63,7 @@
 }
 
 .badge {
-    background: rgba(0,0,0,0.05);
+    background: rgba(0, 0, 0, 0.05);
     padding: 5px 10px;
     border-radius: 8px;
     font-size: 13px;
@@ -76,7 +76,7 @@
     border-top: 1px solid #eee;
 }
 
-.teamsTable tr{
+.teamsTable tr {
     background-color: inherit;
 }
 
@@ -102,7 +102,8 @@
     gap: 8px;
 }
 
-.edit, .delete {
+.edit,
+.delete {
     width: 30px;
     height: 30px;
     display: flex;
@@ -119,7 +120,7 @@
 }
 
 .edit:hover {
-    background: rgba(81,81,231,0.15);
+    background: rgba(81, 81, 231, 0.15);
 }
 
 .delete {
@@ -127,7 +128,7 @@
 }
 
 .delete:hover {
-    background: rgba(231,81,101,0.15);
+    background: rgba(231, 81, 101, 0.15);
 }
 
 .card {
@@ -140,7 +141,7 @@
 }
 
 .card:hover {
-  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
 }
 
 .cardsWrapper {
@@ -148,24 +149,69 @@
 }
 
 .cardTop {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .cardBody {
-  margin: 10px 0;
-  font-size: 14px;
+    margin: 10px 0;
+    font-size: 14px;
 }
 
 .cardActions {
-  display: flex;
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
+    display: flex;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
 }
 
-@media screen and (max-width: 761px){
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border: 2px solid lightgray;
+    border-top: 1px solid #f0f0f0;
+    border-radius: 0 0 12px 12px;
+}
+
+.pgInfo {
+    font-size: 13px;
+    color: rgb(150, 150, 150);
+}
+
+.pgBtns {
+    display: flex;
+    gap: 4px;
+}
+
+.pgBtn {
+    width: 30px;
+    height: 30px;
+    border: 1px solid lightgray;
+    border-radius: 8px;
+    background: transparent;
+    cursor: pointer;
+    font-size: 13px;
+    color: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+}
+
+.pgBtn:hover:not(.pgActive) {
+    background-color: #cccccc;
+}
+
+.pgActive {
+    background-color: black;
+    color: white;
+    border-color: black;
+}
+
+@media screen and (max-width: 761px) {
     .cardsWrapper {
         display: flex;
         flex-direction: column;
@@ -174,6 +220,12 @@
 
     .tableWrapper {
         display: none;
+    }
+
+    .pagination {
+        border: none;
+        margin-top: 15px;
+        padding: 5px;
     }
 }
 
