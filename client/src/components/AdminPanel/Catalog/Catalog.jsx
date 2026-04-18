@@ -4,8 +4,31 @@ import { BiCategory } from "react-icons/bi";
 import { GoTrophy } from "react-icons/go";
 import { RiShieldStarLine } from "react-icons/ri";
 import { FiBox } from "react-icons/fi";
+import { useState, useEffect } from 'react';
+import { useAdminApi } from '../../../api/adminApi';
 
-const Catalog = () => (
+const Catalog = () => {
+
+    const [statsData, setStatsData] = useState({});
+
+    const { getCatalogDetails } = useAdminApi();
+
+    const loadStatsData = async () => {
+        try {
+            const res = await getCatalogDetails();
+
+            setStatsData(res);
+
+        } catch (err) {
+            console.error(err.message);
+        }
+    };
+
+    useEffect(() => {
+        loadStatsData();
+    }, []);
+
+return (
     <div className={styles.catalogContainer}>
 
         <div className={styles.sectionTitle}>
@@ -21,7 +44,7 @@ const Catalog = () => (
                 <div className={styles.card}>
                     <div className={styles.statsInfo}>
                         <p>Categories</p>
-                        <h3>8</h3>
+                        <h3>{statsData?.totalCategories}</h3>
                     </div>
                     <div className={`${styles.statsIcon} ${styles.categoriesIcon}`}>
                         <BiCategory />
@@ -31,7 +54,7 @@ const Catalog = () => (
                 <div className={styles.card}>
                     <div className={styles.statsInfo}>
                         <p>Leagues</p>
-                        <h3>2</h3>
+                        <h3>{statsData?.totalLeagues}</h3>
                     </div>
                     <div className={`${styles.statsIcon} ${styles.leaguesIcon}`}>
                         <GoTrophy />
@@ -41,7 +64,7 @@ const Catalog = () => (
                 <div className={styles.card}>
                     <div className={styles.statsInfo}>
                         <p>Teams</p>
-                        <h3>15</h3>
+                        <h3>{statsData?.totalTeams}</h3>
                     </div>
                     <div className={`${styles.statsIcon} ${styles.teamsIcon}`}>
                         <RiShieldStarLine />
@@ -51,7 +74,7 @@ const Catalog = () => (
                 <div className={styles.card}>
                     <div className={styles.statsInfo}>
                         <p>Products</p>
-                        <h3>850</h3>
+                        <h3>{statsData?.totalProducts}</h3>
                     </div>
                     <div className={`${styles.statsIcon} ${styles.productsIcon}`}>
                         <FiBox />
@@ -72,6 +95,7 @@ const Catalog = () => (
 
         </div>
     </div>
-);
+)
+};
 
 export default Catalog;

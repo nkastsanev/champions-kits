@@ -1,12 +1,37 @@
 import styles from './Products.module.css';
+import AddProductModal from './AddProductModal/AddProductModal';
 
 import { FaPlus } from "react-icons/fa";
 import { FiBox, FiSearch } from "react-icons/fi";
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { LuEye } from "react-icons/lu";
 import { FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
+import { useState, useEffect } from 'react';
+import { useAdminApi } from '../../../api/adminApi';
 
-const Products = () => (
+const Products = () => {
+  const [showAddForm, setShowAddForm] = useState(false);
+
+  const [statsData, setStatsData] = useState({});
+  
+      const { getProductsDetails } = useAdminApi();
+  
+      const loadStatsData = async () => {
+          try {
+              const res = await getProductsDetails();
+  
+              setStatsData(res);
+  
+          } catch (err) {
+              console.error(err.message);
+          }
+      };
+  
+      useEffect(() => {
+          loadStatsData();
+      }, []);
+
+  return (
   <div className={styles.productsContainer}>
 
     <div className={styles.sectionTitle}>
@@ -14,8 +39,16 @@ const Products = () => (
         <h1>Products</h1>
         <p>Manage your product catalog</p>
       </div>
-      <button><FaPlus /> Add Product</button>
+      <button onClick={() => setShowAddForm(true)}><FaPlus /> Add Product</button>
     </div>
+
+    {showAddForm && (
+       <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
+             <AddProductModal onClose={() => setShowAddForm(false)} />
+          </div>
+       </div>
+    )}
 
     <div className={styles.sectionContent}>
 
@@ -23,7 +56,7 @@ const Products = () => (
         <div className={styles.card}>
           <div className={styles.statsInfo}>
             <p>Total Products</p>
-            <h3>8</h3>
+            <h3>{statsData?.totalProducts}</h3>
           </div>
           <div className={`${styles.statsIcon} ${styles.productsIcon}`}>
             <FiBox />
@@ -32,7 +65,7 @@ const Products = () => (
         <div className={styles.card}>
           <div className={styles.statsInfo}>
             <p>Out of Stock</p>
-            <h3>1</h3>
+            <h3>{statsData?.outOfStock}</h3>
           </div>
           <div className={`${styles.statsIcon} ${styles.outIcon}`}>
             <FiBox />
@@ -41,7 +74,7 @@ const Products = () => (
         <div className={styles.card}>
           <div className={styles.statsInfo}>
             <p>Total Sales</p>
-            <h3>45</h3>
+            <h3>{statsData?.totalSales}</h3>
           </div>
           <div className={`${styles.statsIcon} ${styles.salesIcon}`}>
             <FaArrowTrendUp />
@@ -364,6 +397,7 @@ const Products = () => (
 
     </div>
   </div>
-);
+  )
+};
 
 export default Products;

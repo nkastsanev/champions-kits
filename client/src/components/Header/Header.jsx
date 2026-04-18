@@ -11,9 +11,9 @@ const Header = ({ openAuth }) => {
 
   const { user, logout } = useUserContext();
 
-  const userInitial = user?.FirstName?.charAt(0).toUpperCase() || "";
+  const userInitial = user?.firstName?.charAt(0).toUpperCase() || "";
 
-  const isAdmin = user && (user.Role === 1 || user.Role === 2);
+  const isAdmin = user && (user.role === 1 || user.role === 2);
 
   const handleLogout = (e) => {
     e.preventDefault();

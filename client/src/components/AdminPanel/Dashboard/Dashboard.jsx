@@ -4,8 +4,33 @@ import { IoCartOutline } from "react-icons/io5";
 import { FiUsers } from "react-icons/fi";
 import { FaRegMoneyBillAlt } from "react-icons/fa";
 import { FiBox } from "react-icons/fi";
+import { useState, useEffect } from 'react';
+import { useAdminApi } from '../../../api/adminApi';
 
-const Dashboard = () => (
+
+const Dashboard = () => {
+
+  const [statsData, setStatsData] = useState(null);
+
+  const { getDashboardDetails } = useAdminApi();
+
+  const loadStatsData = async () => {
+    try {
+      const res = await getDashboardDetails();
+
+      setStatsData(res);
+
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+    useEffect(() => {
+    loadStatsData();
+  }, []);
+
+
+return (
   <div className={styles.dashboardContainer}>
 
     <div className={styles.sectionTitle}>
@@ -23,7 +48,7 @@ const Dashboard = () => (
         <div className={styles.card}>
           <div className={styles.statsInfo}>
             <p>Total Revenue</p>
-            <h3>€1200</h3>
+            <h3>€{statsData?.totalRevenue}</h3>
           </div>
           <div className={`${styles.statsIcon} ${styles.revenueIcon}`}>
             <FaRegMoneyBillAlt />
@@ -33,7 +58,7 @@ const Dashboard = () => (
         <div className={styles.card}>
           <div className={styles.statsInfo}>
             <p>Total Orders</p>
-            <h3>23</h3>
+            <h3>{statsData?.completedOrders}</h3>
           </div>
           <div className={`${styles.statsIcon} ${styles.ordersIcon}`}>
             <IoCartOutline />
@@ -43,7 +68,7 @@ const Dashboard = () => (
         <div className={styles.card}>
           <div className={styles.statsInfo}>
             <p>Total Users</p>
-            <h3>45</h3>
+            <h3>{statsData?.usersCount}</h3>
           </div>
           <div className={`${styles.statsIcon} ${styles.usersIcon}`}>
             <FiUsers />
@@ -53,7 +78,7 @@ const Dashboard = () => (
         <div className={styles.card}>
           <div className={styles.statsInfo}>
             <p>Products</p>
-            <h3>125</h3>
+            <h3>{statsData?.productsCount}</h3>
           </div>
           <div className={`${styles.statsIcon} ${styles.productsIcon}`}>
             <FiBox />
@@ -196,6 +221,7 @@ const Dashboard = () => (
     </div>
 
   </div>
-);
+)
+};
 
 export default Dashboard;

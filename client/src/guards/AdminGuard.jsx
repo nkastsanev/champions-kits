@@ -3,7 +3,7 @@ import { useUserContext } from "../contexts/UserContext";
 
 export default function AdminGuard() {
     const { user } = useUserContext();
-    const isAdmin = user && (user?.Role === 1 || user?.Role === 2);
+    const isAdmin = user && (user?.role === 1 || user?.role === 2);
     
 
     return isAdmin ? <Outlet /> : <Navigate to={'/'} replace />

@@ -1,183 +1,336 @@
 import styles from './Users.module.css';
+import { useState, useEffect } from 'react';
 import { FiSearch, FiUsers } from "react-icons/fi";
 import { FaArrowTrendUp } from "react-icons/fa6";
+import { useUsersApi } from '../../../api/usersApi';
+import { useUserContext } from '../../../contexts/UserContext';
+import { useAdminApi } from '../../../api/adminApi';
 
-const Users = () => (
-  <div className={styles.usersContainer}>
+const Users = () => {
 
-    <div className={styles.sectionTitle}>
-      <h1>Users Management</h1>
+  const { user: currentUser } = useUserContext();
+  const { getAll, updateRole } = useUsersApi();
+
+  const [users, setUsers] = useState([]);
+
+  const [search, setSearch] = useState('');
+  const [role, setRole] = useState(null);
+
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [debouncedSearch, setDebouncedSearch] = useState(search);
+
+  const [statsData, setStatsData] = useState(null);
+
+  const { getUsersDetails } = useAdminApi();
+
+  const [loadingId, setLoadingId] = useState(null);
+
+  const pageSize = 10;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+  const start = (page - 1) * pageSize + 1;
+  const end = Math.min(page * pageSize, total);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
+
+  useEffect(() => {
+    loadData();
+  }, [debouncedSearch, role, page]);
+
+
+  const loadStatsData = async () => {
+    try {
+      const res = await getUsersDetails();
+
+      setStatsData(res);
+
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  useEffect(() => {
+    loadStatsData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      const res = await getAll(debouncedSearch, role, page);
+
+      setUsers(res.data);
+      setTotal(res.total);
+
+
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  const getPages = () => {
+    const pages = [];
+
+    if (totalPages <= 3) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+      return pages;
+    }
+
+    pages.push(1);
+
+    if (page > 2) pages.push('...');
+
+    for (let i = page - 1; i <= page + 1; i++) {
+      if (i > 1 && i < totalPages) {
+        pages.push(i);
+      }
+    }
+
+    if (page < totalPages - 1) pages.push('...');
+
+    pages.push(totalPages);
+
+    return [...new Set(pages)];
+  };
+
+  const handleRoleChange = async (userId, newRole) => {
+    try {
+      setLoadingId(userId);
+      await updateRole(userId, newRole);
+      await loadData();
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setLoadingId(null);
+    }
+  };
+
+  return (
+    <div className={styles.usersContainer}>
+
+      <div className={styles.sectionTitle}>
+        <h1>Users Management</h1>
+      </div>
+
+      <div className={styles.sectionContent}>
+
+        <p>Manage customer accounts and permissions</p>
+
+        <div className={styles.stats}>
+          <div className={styles.card}>
+            <div className={styles.statsInfo}>
+              <p>Total Users</p>
+              <h3>{statsData?.totalUsers}</h3>
+            </div>
+            <div className={`${styles.statsIcon} ${styles.usersIcon}`}>
+              <FiUsers />
+            </div>
+          </div>
+
+          <div className={styles.card}>
+            <div className={styles.statsInfo}>
+              <p>New This Month</p>
+              <h3>{statsData?.newThisMonth}</h3>
+            </div>
+            <div className={`${styles.statsIcon} ${styles.newUsersIcon}`}>
+              <FaArrowTrendUp />
+            </div>
+          </div>
+        </div>
+
+        {/* TOOLBAR */}
+        <div className={styles.toolbar}>
+
+          <div className={styles.searchWrap}>
+            <input
+              className={styles.searchInput}
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+              placeholder="Search by name or email..."
+            />
+            <button className={styles.searchBtn}>
+              <FiSearch />
+            </button>
+          </div>
+
+          <select
+            className={styles.filter}
+            value={role ?? ''}
+            onChange={(e) => {
+              setRole(e.target.value || null);
+              setPage(1);
+            }}
+          >
+            <option value="">All roles</option>
+            <option value="0">User</option>
+            <option value="1">Admin</option>
+            <option value="2">Owner</option>
+          </select>
+
+        </div>
+
+        {/* TABLE */}
+        <div className={styles.tableWrapper}>
+          <table className={styles.usersTable}>
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Role</th>
+                <th>Join Date</th>
+                <th>Orders</th>
+                <th>Total Spent</th>
+                <th>Last Order</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {users.map(u => (
+                <tr key={u.id}>
+
+                  <td>
+                    <div>
+                      <p className={styles.userName}>
+                        {u.firstName} {u.lastName}
+                      </p>
+                      <p className={styles.userEmail}>
+                        {u.email}
+                      </p>
+                    </div>
+                  </td>
+
+                  <td>
+                    <span className={`${styles.status} ${u.role === 2 ? styles.owner :
+                      u.role === 1 ? styles.admin :
+                        styles.user
+                      }`}>
+                      {u.role === 2 ? 'Owner' :
+                        u.role === 1 ? 'Admin' : 'User'}
+                    </span>
+                  </td>
+
+                  <td>
+                    {new Date(u.createdAt).toLocaleDateString()}
+                  </td>
+
+                  <td>{u.ordersCount}</td>
+
+                  <td>
+                    €{Number(u.totalSpent).toFixed(2)}
+                  </td>
+
+                  <td>
+                    {u.lastOrder
+                      ? new Date(u.lastOrder).toLocaleDateString()
+                      : '-'}
+                  </td>
+
+                  <td>
+                    <div className={styles.actions}>
+
+                      <button className={styles.view}>
+                        View
+                      </button>
+
+                      {/* OWNER */}
+                      {currentUser?.role === 2 && u.id !== currentUser.id && (
+                        <>
+                          {u.role !== 1 && (
+                            <button
+                              className={styles.promote}
+                              disabled={loadingId === u.id}
+                              onClick={() => handleRoleChange(u.id, 1)}
+                            >
+                              Promote
+                            </button>
+                          )}
+
+                          {u.role !== 0 && (
+                            <button
+                              className={styles.demote}
+                              disabled={loadingId === u.id}
+                              onClick={() => handleRoleChange(u.id, 0)}
+                            >
+                              Demote
+                            </button>
+                          )}
+                        </>
+                      )}
+
+                      {/* ADMIN */}
+                      {currentUser?.role === 1 && u.role === 0 && (
+                        <button
+                          className={styles.promote}
+                          disabled={loadingId === u.id}
+                          onClick={() => handleRoleChange(u.id, 1)}
+                        >
+                          Promote
+                        </button>
+                      )}
+
+                    </div>
+                  </td>
+
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {/* PAGINATION */}
+          <div className={styles.pagination}>
+            <span className={styles.pgInfo}>
+              Showing {start}–{end} of {total} users
+            </span>
+
+            <div className={styles.pgBtns}>
+              <button
+                className={styles.pgBtn}
+                disabled={page === 1}
+                onClick={() => setPage(p => p - 1)}
+              >
+                ‹
+              </button>
+
+              {getPages().map((p, i) =>
+                p === '...' ? (
+                  <span key={`dots-${i}`} className={styles.pgDots}>...</span>
+                ) : (
+                  <button
+                    key={p}
+                    className={`${styles.pgBtn} ${page === p ? styles.pgActive : ''}`}
+                    onClick={() => setPage(p)}
+                  >
+                    {p}
+                  </button>
+                )
+              )}
+
+              <button
+                className={styles.pgBtn}
+                disabled={page === totalPages}
+                onClick={() => setPage(p => p + 1)}
+              >
+                ›
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
     </div>
-
-    <div className={styles.sectionContent}>
-
-      <p>Manage customer accounts and permissions</p>
-
-      <div className={styles.stats}>
-
-        <div className={styles.card}>
-          <div className={styles.statsInfo}>
-            <p>Total Users</p>
-            <h3>8</h3>
-          </div>
-          <div className={`${styles.statsIcon} ${styles.usersIcon}`}>
-            <FiUsers />
-          </div>
-        </div>
-
-        <div className={styles.card}>
-          <div className={styles.statsInfo}>
-            <p>New This Month</p>
-            <h3>2</h3>
-          </div>
-          <div className={`${styles.statsIcon} ${styles.newUsersIcon}`}>
-            <FaArrowTrendUp />
-          </div>
-        </div>
-
-      </div>
-
-      <div className={styles.toolbar}>
-        <div className={styles.searchWrap}>
-          <input
-            className={styles.searchInput}
-            type="text"
-            placeholder="Search by name or email..."
-          />
-          <button className={styles.searchBtn}>
-            <FiSearch />
-          </button>
-        </div>
-
-        <select className={styles.filter}>
-          <option value="All roles">All roles</option>
-          <option value="User">User</option>
-          <option value="Admin">Admin</option>
-          <option value="Owner">Owner</option>
-        </select>
-
-      </div>
-
-      <div className={styles.tableWrapper}>
-        <table className={styles.usersTable}>
-          <thead>
-            <tr>
-              <th>User</th>
-              <th>Role</th>
-              <th>Join Date</th>
-              <th>Orders</th>
-              <th>Total Spent</th>
-              <th>Last Order</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-
-          <tbody>
-
-            <tr>
-              <td>
-                <div className={styles.userCell}>
-                  <div>
-                    <p className={styles.userName}>Ivan Ivanov</p>
-                    <p className={styles.userEmail}>ivan@email.com</p>
-                  </div>
-                </div>
-              </td>
-              <td><span className={`${styles.status} ${styles.owner}`}>Owner</span></td>
-              <td>Dec 15, 2024</td>
-              <td>24</td>
-              <td>€2,845</td>
-              <td>Mar 5, 2026</td>
-              <td>
-                <div className={styles.actions}>
-                  <button className={styles.view}>View</button>
-                </div>
-              </td>
-            </tr>
-
-            <tr>
-              <td>
-                <div className={styles.userCell}>
-                  <div>
-                    <p className={styles.userName}>Maria Garcia</p>
-                    <p className={styles.userEmail}>maria@email.com</p>
-                  </div>
-                </div>
-              </td>
-              <td><span className={`${styles.status} ${styles.admin}`}>Admin</span></td>
-              <td>Jan 10, 2025</td>
-              <td>18</td>
-              <td>€1,980</td>
-              <td>Mar 4, 2026</td>
-              <td>
-                <div className={styles.actions}>
-                  <button className={styles.view}>View</button>
-                  <button className={styles.demote}>Demote</button>
-                </div>
-              </td>
-            </tr>
-
-            <tr>
-              <td>
-                <div className={styles.userCell}>
-                  <div>
-                    <p className={styles.userName}>John Smith</p>
-                    <p className={styles.userEmail}>john@email.com</p>
-                  </div>
-                </div>
-              </td>
-              <td><span className={`${styles.status} ${styles.user}`}>User</span></td>
-              <td>Feb 5, 2025</td>
-              <td>12</td>
-              <td>€1,456</td>
-              <td>Mar 3, 2026</td>
-              <td>
-                <div className={styles.actions}>
-                  <button className={styles.view}>View</button>
-                  <button className={styles.promote}>Promote</button>
-                </div>
-              </td>
-            </tr>
-
-            <tr>
-              <td>
-                <div className={styles.userCell}>
-                  <div>
-                    <p className={styles.userName}>Ana Martinez</p>
-                    <p className={styles.userEmail}>ana@email.com</p>
-                  </div>
-                </div>
-              </td>
-              <td><span className={`${styles.status} ${styles.user}`}>User</span></td>
-              <td>Nov 20, 2024</td>
-              <td>8</td>
-              <td>€734</td>
-              <td>Feb 15, 2026</td>
-              <td>
-                <div className={styles.actions}>
-                  <button className={styles.view}>View</button>
-                  <button className={styles.promote}>Promote</button>
-                </div>
-              </td>
-            </tr>
-
-          </tbody>
-        </table>
-
-        <div className={styles.pagination}>
-          <span className={styles.pgInfo}>Showing 1–4 of 4 users</span>
-          <div className={styles.pgBtns}>
-            <button className={styles.pgBtn}>‹</button>
-            <button className={`${styles.pgBtn} ${styles.pgActive}`}>1</button>
-            <button className={styles.pgBtn}>2</button>
-            <button className={styles.pgBtn}>3</button>
-            <button className={styles.pgBtn}>›</button>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-);
+  );
+}
 
 export default Users;

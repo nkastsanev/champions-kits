@@ -6,16 +6,59 @@ import adminMiddleware from '../middlewares/adminMiddleware.js';
 const adminController = Router();
 
 
-adminController.put('/promote-to-admin', authMiddleware, adminMiddleware, async (req, res) => {
-
-    const {userId} = req.body;
+adminController.get('/dashboard', authMiddleware, adminMiddleware, async (req, res) => {
 
     try {
-        const updatedUser = await adminService.promoteToAdmin(userId);
-        res.status(200).json({message: `${updatedUser.FirstName} ${updatedUser.LastName} promoted to Admin!`})
+        const dashboardDetails = await adminService.dashboardDetails();
+        res.status(200).json(dashboardDetails);
     } catch (err) {
-        res.status(400).json({message: err.message});
+        res.status(500).json({ message: err.message });
     }
+
+});
+
+adminController.get('/products', authMiddleware, adminMiddleware, async (req, res) => {
+
+    try {
+        const productsDetails = await adminService.productsDetails();
+        res.status(200).json(productsDetails);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+
+});
+
+adminController.get('/orders', authMiddleware, adminMiddleware, async (req, res) => {
+
+    try {
+        const ordersDetails = await adminService.ordersDetails();
+        res.status(200).json(ordersDetails);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+
+});
+
+adminController.get('/users', authMiddleware, adminMiddleware, async (req, res) => {
+
+    try {
+        const usersDetails = await adminService.usersDetails();
+        res.status(200).json(usersDetails);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+
+});
+
+adminController.get('/catalog', authMiddleware, adminMiddleware, async (req, res) => {
+
+    try {
+        const catalogDetails = await adminService.catalogDetails();
+        res.status(200).json(catalogDetails);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+
 });
 
 export default adminController;

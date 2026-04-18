@@ -61,6 +61,7 @@ export default function TeamsList() {
     try {
       if (modal === 'add') {
         await create(formData.leagueId, formData.teamName);
+        
       } else {
         await update(
           modal.id,
