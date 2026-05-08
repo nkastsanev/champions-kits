@@ -15,6 +15,14 @@ const TeamModal = ({ initialData, leagues, categories, onClose, onSave }) => {
     setCategoryId(initialData?.categoryId ?? '');
   }, [initialData]);
 
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setTouched(true);
@@ -64,7 +72,7 @@ const TeamModal = ({ initialData, leagues, categories, onClose, onSave }) => {
               value={categoryId}
               onChange={(e) => {
                 setCategoryId(e.target.value);
-                setLeagueId(''); // reset league при смяна
+                setLeagueId('');
               }}
             >
               {!isEdit && <option value="">Select category</option>}

@@ -1,1 +1,267 @@
-.AddProductModal {}
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 16px;
+}
+
+.modalBox {
+    background: #fff;
+    border-radius: 14px;
+    width: 100%;
+    max-width: 560px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.modalTitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+    margin: 0;
+    text-align: center;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.fullWidth {
+    grid-column: 1 / -1;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.input,
+.select,
+.textarea {
+    padding: 9px 12px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+    color: #111827;
+    background: #fff;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.15s;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+    border-color: #6b7280;
+}
+
+.textarea {
+    resize: vertical;
+    font-family: inherit;
+}
+
+.error {
+    font-size: 12px;
+    color: #ef4444;
+    margin: 0;
+}
+
+.imagesList {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin-top: 6px;
+}
+
+.imageItem {
+    position: relative;
+    width: 130px;
+}
+
+.imagePreview {
+    width: 130px;
+    height: 130px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    display: block;
+}
+
+.mainBadge {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    background: #1a1a1a;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.imageActions {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 6px;
+}
+
+.setMainBtn {
+    width: 100%;
+    padding: 5px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    background: #fff;
+    color: #374151;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.setMainBtn:hover {
+    background: #f3f4f6;
+}
+
+.removeImageBtn {
+    width: 100%;
+    padding: 5px;
+    border-radius: 6px;
+    border: 1px solid #fca5a5;
+    background: #fff;
+    color: #ef4444;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.removeImageBtn:hover {
+    background: #fef2f2;
+}
+
+.addImageBtn {
+    width: 130px;
+    height: 130px;
+    border-radius: 8px;
+    border: 1.5px dashed #d1d5db;
+    background: #f9fafb;
+    color: #6b7280;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.addImageBtn:hover {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+}
+
+.sizesGrid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.sizeItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.sizeName {
+    font-size: 12px;
+    font-weight: 600;
+    color: #374151;
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 3px 0;
+    width: 100%;
+    text-align: center;
+}
+
+.stockInput {
+    width: 100%;
+    padding: 6px 4px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    font-size: 13px;
+    text-align: center;
+    color: #111827;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.stockInput:focus {
+    border-color: #6b7280;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-top: 4px;
+}
+
+.cancelBtn {
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    background: #fff;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.cancelBtn:hover {
+    background: #f3f4f6;
+}
+
+.saveBtn {
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: none;
+    background: #1a1a1a;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+
+.saveBtn:hover {
+    opacity: 0.85;
+}
+
+.saveBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

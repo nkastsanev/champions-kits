@@ -3,6 +3,14 @@ import { useEffect } from 'react';
 
 const ConfirmTeamModal = ({ name, onCancel, onConfirm }) => {
 
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
+
   return (
     <div className={styles.overlay}>
       <div className={styles.modalBox} onClick={(e) => e.stopPropagation()}>

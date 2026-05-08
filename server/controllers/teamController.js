@@ -36,6 +36,15 @@ teamController.post('/', authMiddleware, adminMiddleware, async (req, res) => {
 
 });
 
+teamController.get('/simple', async (req, res) => {
+    try {
+        const teams = await teamService.getAllSimple();
+        res.status(200).json(teams);
+    } catch (err) {
+        res.status(400).json({ message: "Error retrieving simple teams." });
+    }
+});
+
 teamController.put('/:teamId', authMiddleware, adminMiddleware, async (req, res) => {
     const teamId = req.params.teamId;
     const { leagueId, teamName } = req.body;

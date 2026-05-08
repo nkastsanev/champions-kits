@@ -22,6 +22,12 @@ export const useTeamApi = () => {
         return response.json();
     };
 
+    const getAllSimple = async () => {
+        const response = await fetch(`${baseUrl}/simple`);
+        if (!response.ok) throw new Error('Failed to fetch teams')
+        return response.json();
+    };
+
     const create = async (leagueId, teamName) => {
         const response = await fetch(baseUrl, {
             method: 'POST',
@@ -55,5 +61,5 @@ export const useTeamApi = () => {
         if (!response.ok) throw new Error('Failed to delete team');
     };
 
-    return { getAll, create, update, remove };
+    return { getAll, getAllSimple, create, update, remove };
 };

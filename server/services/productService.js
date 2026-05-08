@@ -3,185 +3,103 @@ import { connectDB } from "../db.js";
 
 const productService = {
 
-    async getProducts({ categoryId, leagueId, teamId, pageNumber, pageSize }) {
+    async getProducts({
+        categoryId,
+        leagueId,
+        teamId,
+        search,
+        pageNumber,
+        pageSize
+    }) {
+
         const pool = await connectDB();
 
-        let filter = "";
-        let request = pool.request()
-            .input("PageNumber", sql.Int, pageNumber)
-            .input("PageSize", sql.Int, pageSize);
+        const request = pool.request()
+            .input('PageNumber', sql.Int, pageNumber)
+            .input('PageSize', sql.Int, pageSize);
 
-        if (teamId) {
-            filter = "WHERE p.TeamId = @TeamId";
-            request.input("TeamId", sql.Int, teamId);
-        } else if (leagueId) {
-            filter = "WHERE p.LeagueId = @LeagueId";
-            request.input("LeagueId", sql.Int, leagueId);
-        } else if (categoryId) {
-            filter = "WHERE p.CategoryId = @CategoryId";
-            request.input("CategoryId", sql.Int, categoryId);
+        const filters = [];
+
+        if (categoryId) {
+            filters.push('p.CategoryId = @CategoryId');
+            request.input('CategoryId', sql.Int, categoryId);
         }
 
+        if (leagueId) {
+            filters.push('p.LeagueId = @LeagueId');
+            request.input('LeagueId', sql.Int, leagueId);
+        }
+
+        if (teamId) {
+            filters.push('p.TeamId = @TeamId');
+            request.input('TeamId', sql.Int, teamId);
+        }
+
+        if (search) {
+            filters.push(`(
+      p.Name LIKE @Search
+    )`);
+
+            request.input('Search', sql.NVarChar, `%${search}%`);
+        }
+
+        const whereClause = filters.length
+            ? `WHERE ${filters.join(' AND ')}`
+            : '';
+
         const result = await request.query(`
-        SELECT 
-        p.Id,
-        p.Name,
-        p.Price,
-        p.Description,
-        p.TeamId,
-        t.Name AS TeamName,
-        p.LeagueId,
-        l.Name AS LeagueName,
-        p.CategoryId,
-        c.Name AS CategoryName,
-        i.ImageUrl AS MainImage
-        FROM dbo.Products p
-        JOIN dbo.ProductImages i ON p.Id = i.ProductId AND i.IsMain = 1
-        JOIN dbo.Teams t ON p.TeamId = t.Id
-        JOIN dbo.Leagues l ON p.LeagueId = l.Id
-        JOIN dbo.Categories c ON p.CategoryId = c.Id
-        ${filter}
-        ORDER BY p.Id
-        OFFSET (@PageNumber - 1) * @PageSize ROWS
-        FETCH NEXT @PageSize ROWS ONLY
+    SELECT
+      p.Id AS id,
+      p.Name AS name,
+      p.Price AS price,
+      p.Description AS description,
+      p.TeamId AS teamId,
+      t.Name AS teamName,
+      p.LeagueId as leagueId,
+      l.Name AS leagueName,
+      p.CategoryId AS categoryId,
+      c.Name AS categoryName,
+      i.ImageUrl AS mainImage
+    FROM dbo.Products p
+    JOIN dbo.ProductImages i
+      ON p.Id = i.ProductId
+      AND i.IsMain = 1
+    JOIN dbo.Teams t
+      ON p.TeamId = t.Id
+    JOIN dbo.Leagues l
+      ON p.LeagueId = l.Id
+    JOIN dbo.Categories c
+      ON p.CategoryId = c.Id
+    ${whereClause}
+    ORDER BY p.Id
+    OFFSET (@PageNumber - 1) * @PageSize ROWS
+    FETCH NEXT @PageSize ROWS ONLY
+  `);
+
+        const products = result.recordset;
+
+        for (const product of products) {
+
+            const sizesResult = await pool.request()
+                .input('ProductId', sql.Int, product.id)
+                .query(`
+        SELECT
+            s.Id AS SizeId,
+            s.Name AS SizeName,
+            ISNULL(ps.Stock, 0) AS Stock
+        FROM dbo.Sizes s
+        LEFT JOIN dbo.ProductSizes ps
+            ON s.Id = ps.SizeId
+            AND ps.ProductId = @ProductId
+        ORDER BY s.Id
     `);
 
-        return result.recordset;
+            product.sizes = sizesResult.recordset;
+        }
+
+        return products;
+
     },
-
-    // async getAllProducts(pageNumber, pageSize) {
-    //     const pool = await connectDB();
-
-    //     const result = await pool.request()
-    //         .input('PageNumber', sql.Int, pageNumber)
-    //         .input('PageSize', sql.Int, pageSize)
-    //         .query(`
-    //         SELECT 
-    //         p.Id,
-    //         p.Name,
-    //         p.Price,
-    //         p.Description,
-    //         p.TeamId,
-    //         t.Name AS TeamName,
-    //         p.LeagueId,
-    //         l.Name AS LeagueName,
-    //         p.CategoryId,
-    //         c.Name AS CategoryName,
-    //         i.ImageUrl AS MainImage
-    //         FROM dbo.Products p
-    //         JOIN dbo.ProductImages i ON p.Id = i.ProductId AND i.IsMain = 1
-    //         JOIN dbo.Teams t ON p.TeamId = t.Id
-    //         JOIN dbo.Leagues l ON p.LeagueId = l.Id
-    //         JOIN dbo.Categories c ON p.CategoryId = c.Id
-    //         ORDER BY p.Id
-    //         OFFSET (@PageNumber - 1) * @PageSize ROWS
-    //         FETCH NEXT @PageSize ROWS ONLY
-    //         `);
-
-    //     return result.recordset;
-    // },
-
-    // async getProductsByCategory(categoryId, pageNumber, pageSize) {
-    //     const pool = await connectDB();
-
-    //     const result = await pool.request()
-    //         .input("CategoryId", sql.Int, categoryId)
-    //         .input("PageNumber", sql.Int, pageNumber)
-    //         .input("PageSize", sql.Int, pageSize)
-    //         .query(`
-    //             SELECT
-    //             p.Id,
-    //             p.Name,
-    //             p.Price,
-    //             p.Description,
-    //             p.TeamId,
-    //             t.Name AS TeamName,
-    //             p.LeagueId,
-    //             l.Name AS LeagueName,
-    //             p.CategoryId,
-    //             c.Name AS CategoryName,
-    //             i.ImageUrl AS MainImage
-    //             FROM dbo.Products p
-    //             JOIN dbo.ProductImages i on p.Id = i.ProductId AND i.IsMain = 1
-    //             JOIN dbo.Teams t ON p.TeamId = t.Id
-    //             JOIN dbo.Leagues l ON p.LeagueId = l.Id
-    //             JOIN dbo.Categories c ON p.CategoryId = c.Id
-    //             WHERE p.CategoryId = @CategoryId
-    //             ORDER BY p.Id
-    //             OFFSET (@PageNumber - 1) * @PageSize ROWS
-    //             FETCH NEXT @PageSize ROWS ONLY
-    //             `);
-
-    //     return result.recordset;
-    // },
-
-    // async getProductsByLeague(leagueId, pageNumber, pageSize) {
-    //     const pool = await connectDB();
-
-    //     const result = await pool.request()
-    //         .input('LeagueId', sql.Int, leagueId)
-    //         .input('PageNumber', sql.Int, pageNumber)
-    //         .input('PageSize', sql.Int, pageSize)
-    //         .query(`
-    //                 SELECT 
-    //                 p.Id,
-    //                 p.Name,
-    //                 p.Price,
-    //                 p.Description,
-    //                 p.TeamId,
-    //                 t.Name AS TeamName,
-    //                 p.LeagueId,
-    //                 l.Name AS LeagueName,
-    //                 p.CategoryId,
-    //                 c.Name AS CategoryName,
-    //                 i.ImageUrl AS MainImage
-    //                 FROM dbo.Products p
-    //                 JOIN dbo.ProductImages i ON p.Id = i.ProductId AND i.IsMain = 1
-    //                 JOIN dbo.Teams t ON p.TeamId = t.Id
-    //                 JOIN dbo.Leagues l ON p.LeagueId = l.Id
-    //                 JOIN dbo.Categories c ON p.CategoryId = c.Id
-    //                 WHERE p.LeagueId = @LeagueId
-    //                 ORDER BY p.Id
-    //                 OFFSET (@PageNumber - 1) * @PageSize ROWS
-    //                 FETCH NEXT @PageSize ROWS ONLY
-    //                 `);
-
-    //     return result.recordset;
-    // },
-
-    // async getProductsByTeam(teamId, pageNumber, pageSize) {
-    //     const pool = await connectDB();
-
-    //     const result = await pool.request()
-    //         .input('TeamId', sql.Int, teamId)
-    //         .input('PageNumber', sql.Int, pageNumber)
-    //         .input('PageSize', sql.Int, pageSize)
-    //         .query(`
-    //                     SELECT 
-    //                     p.Id,
-    //                     p.Name,
-    //                     p.Price,
-    //                     p.Description,
-    //                     p.TeamId,
-    //                     t.Name AS TeamName,
-    //                     p.LeagueId,
-    //                     l.Name AS LeagueName,
-    //                     p.CategoryId,
-    //                     c.Name AS CategoryName,
-    //                     i.ImageUrl AS MainImage
-    //                     FROM dbo.Products p
-    //                     JOIN dbo.ProductImages i ON p.Id = i.ProductId AND i.IsMain = 1
-    //                     JOIN dbo.Teams t ON p.TeamId = t.Id
-    //                     JOIN dbo.Leagues l ON p.LeagueId = l.Id
-    //                     JOIN dbo.Categories c ON p.CategoryId = c.Id
-    //                     WHERE p.TeamId = @TeamId
-    //                     ORDER BY p.Id
-    //                     OFFSET (@PageNumber - 1) * @PageSize ROWS
-    //                     FETCH NEXT @PageSize ROWS ONLY
-    //                     `);
-
-    //     return result.recordset;
-    // },
 
     async getProductById(productId) {
 
@@ -238,7 +156,7 @@ const productService = {
         };
     },
 
-    async createProduct(categoryId, leagueId, teamId, productName, description, price, images, sizes) {
+    async createProduct(categoryId, leagueId, teamId, productName, price, description, images, productSizes) {
 
         const pool = await connectDB();
 
@@ -247,8 +165,8 @@ const productService = {
             .input("LeagueId", sql.Int, leagueId)
             .input("TeamId", sql.Int, teamId)
             .input("Name", sql.NVarChar, productName)
-            .input("Description", sql.NVarChar, description)
             .input("Price", sql.Decimal(10, 2), price)
+            .input("Description", sql.NVarChar, description)
             .query(`
                     INSERT INTO dbo.Products (CategoryId, LeagueId, TeamId, Name, Description, Price)
                     OUTPUT INSERTED.*
@@ -268,7 +186,7 @@ const productService = {
                             `);
         }
 
-        for (const size of sizes) {
+        for (const size of productSizes) {
             await pool.request()
                 .input("ProductId", sql.Int, product.Id)
                 .input("SizeId", sql.Int, size.id)
@@ -282,7 +200,7 @@ const productService = {
         return {
             ...product,
             images,
-            sizes
+            productSizes
         };
     },
 
@@ -356,7 +274,7 @@ const productService = {
                 if (img.isMain) {
                     await new sql.Request(transaction)
                         .input("ProductId", sql.Int, productId)
-                        .input("Id", sql.Int, Number(img.id) ?? 0)
+                        .input("Id", sql.Int, img.id ? Number(img.id) : 0)
                         .query(`
                         UPDATE ProductImages
                         SET IsMain = 0
@@ -381,7 +299,6 @@ const productService = {
             const existingSizeIds = existingSizes.recordset.map(s => Number(s.SizeId));
             const newSizeIds = sizes.map(s => Number(s.id));
 
-            // Adding or updating sizes
             for (const size of sizes) {
                 if (!existingSizeIds.includes(Number(size.id))) {
                     await new sql.Request(transaction)
@@ -444,7 +361,9 @@ const productService = {
             };
 
         } catch (err) {
-            await transaction.rollback();
+            if (!transaction._aborted) {
+                await transaction.rollback();
+            }
             throw err;
         }
     },
@@ -482,7 +401,9 @@ const productService = {
             return { message: "Product deleted successfully." };
 
         } catch (err) {
-            await transaction.rollback();
+            if (!transaction._aborted) {
+                await transaction.rollback();
+            }
             throw err;
         }
     },
@@ -511,41 +432,18 @@ const productService = {
     `);
 
         return result.recordset[0].total;
+    },
+
+    async getProductSizes() {
+        const pool = await connectDB();
+        const result = await pool.request()
+            .query(`SELECT 
+	                    Id as id, 
+	                    Name as name 
+                    FROM dbo.Sizes;`);
+
+        return result.recordset;
     }
-
-    // async countProducts() {
-    //     const pool = await connectDB();
-    //     const result = await pool.request()
-    //         .query(`SELECT COUNT(*) AS total FROM dbo.Products`)
-    //     return result.recordset[0].total;
-    // },
-
-    // async countProductsFromOneCategory(categoryId) {
-    //     const pool = await connectDB();
-    //     const result = await pool.request()
-    //         .input("CategoryId", sql.Int, categoryId)
-    //         .query(`SELECT COUNT (*) AS total FROM dbo.Products
-    //                 WHERE CategoryId = @CategoryId`)
-    //     return result.recordset[0].total;
-    // },
-
-    // async countProductsFromOneLeague(leagueId) {
-    //     const pool = await connectDB();
-    //     const result = await pool.request()
-    //         .input("LeagueId", sql.Int, leagueId)
-    //         .query(`SELECT COUNT (*) AS total FROM dbo.Products
-    //                 WHERE LeagueId = @LeagueId`)
-    //     return result.recordset[0].total;
-    // },
-
-    // async countProductsFromOneTeam(teamId) {
-    //     const pool = await connectDB();
-    //     const result = await pool.request()
-    //         .input("TeamId", sql.Int, teamId)
-    //         .query(`SELECT COUNT (*) AS total FROM dbo.Products
-    //                 WHERE TeamId = @TeamId`)
-    //     return result.recordset[0].total;
-    // }
 
 };
 

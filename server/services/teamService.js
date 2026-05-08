@@ -54,6 +54,17 @@ export const teamService = {
         };
     },
 
+    async getAllSimple() {
+        const pool = await connectDB();
+
+        const result = await pool.request()
+        .query(`SELECT Id as id, LeagueId as leagueId, Name as name
+            FROM dbo.Teams
+            ORDER BY Name`);
+
+        return result.recordset;
+    },
+
     async create(leagueId, teamName) {
         const pool = await connectDB();
 
