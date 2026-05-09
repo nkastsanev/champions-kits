@@ -25,6 +25,8 @@ import CategoriesList from "./components/AdminPanel/Catalog/CategoriesList/Categ
 import LeaguesList from "./components/AdminPanel/Catalog/LeaguesList/LeaguesList";
 import TeamsList from "./components/AdminPanel/Catalog/TeamsList/TeamsList";
 
+import NotFoundPage from "./components/NotFoundPage/NotFoundPage";
+
 import Footer from './components/Footer/Footer';
 
 import { UserProvider } from "./contexts/UserContext";
@@ -47,6 +49,7 @@ function App() {
 
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="*" element={<NotFoundPage />} />
 
           <Route element={<AuthGuard />}>
             <Route path="/profile" element={<ProfilePage />}>

@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import styles from './Header.module.css';
 import { IoMdPerson, IoMdSearch } from "react-icons/io";
 import { MdAdminPanelSettings } from "react-icons/md";
-import { FaHeart, FaShoppingCart } from "react-icons/fa";
+import { FaHeart, FaShoppingCart, FaTruck } from "react-icons/fa";
+import { TiTick } from "react-icons/ti";
+import { FaArrowsRotate } from "react-icons/fa6";
 import AuthModal from '../AuthModal/AuthModal';
 import { Link } from 'react-router-dom';
 import { useUserContext } from '../../contexts/UserContext';
@@ -25,9 +27,10 @@ const Header = ({ openAuth }) => {
 
       <div className={styles.topBar}>
 
-        <span className={styles.topBarText}>✔️ 100% Authentic Kits</span>
-        <span className={styles.topBarText}>🚚 Free Shipping over €100</span>
-        <span className={styles.topBarText}>🔄 Easy Returns 14 Days</span>
+        <span className={styles.topBarText}><TiTick size={20}/> 100% Authentic Kits</span>
+        <span className={styles.topBarText}><FaTruck/> Free Shipping over €100</span>
+        <span className={styles.topBarText}><FaArrowsRotate/> Easy Returns 14 Days</span>
+
       </div>
 
       <div className={styles.headerContainer}>
